@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="300" width="300" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs4">
+  <radialGradient id="radialGradient4399" gradientUnits="userSpaceOnUse" cy="924.79" cx="128.45" gradientTransform="matrix(1.2198296,-3.3664458e-7,3.3577732e-7,1.2166871,-6.69284,-222.8239)" r="123.45">
+   <stop id="stop4403" stop-color="#FFF" stop-opacity="0.19607843" offset="0"/>
+   <stop id="stop4409" stop-color="#FFF" stop-opacity="0.19607843" offset="0.83564"/>
+   <stop id="stop4405" stop-color="#FFF" stop-opacity="0.09803922" offset="0.88007"/>
+   <stop id="stop4407" stop-color="#FFF" stop-opacity="0.09803922" offset="0.97771"/>
+   <stop id="stop4401" stop-color="#FFF" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <font id="font3058" horiz-adv-x="1024">
+   <font-face id="font-face3060" font-family="Sans" units-per-em="1024"/>
+   <missing-glyph id="missing-glyph3062" d="M0,0h1000v1024h-1000z"/>
+  </font>
+ </defs>
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(0,-752.36211)">
+  <path id="rect5466" fill="url(#radialGradient4399)" stroke-width="0" stroke-miterlimit="4" d="M299.57,752.79,300,1052.4,0,1051.9,0.42958,752.36z"/>
+  <flowRoot id="flowRoot6286" style="word-spacing:0px;letter-spacing:0px;" line-height="125%" font-family="Serif" xml:space="preserve" font-size="20px" font-style="italic" font-stretch="normal" font-variant="normal" font-weight="normal" fill="#000000"><flowRegion id="flowRegion6288"><rect id="rect6290" y="-675.81" width="14.142" height="25.456" x="291.33"/></flowRegion><flowPara id="flowPara6292"/></flowRoot>
+  <flowRoot id="flowRoot5545" style="word-spacing:0px;letter-spacing:0px;" line-height="125%" font-family="Sawasdee" xml:space="preserve" font-size="25px" transform="translate(0,752.13206)" font-stretch="normal" font-variant="normal" font-style="normal" font-weight="bold" fill="#000000"><flowRegion id="flowRegion5547"><rect id="rect5549" y="230.23" width="32" height="78" x="726"/></flowRegion><flowPara id="flowPara5551"/></flowRoot>
+  <flowRoot id="flowRoot4538" style="word-spacing:0px;letter-spacing:0px;" font-family="Sans" transform="matrix(28.869376,0,0,29.484411,-1067.0822,-1690.5399)" xml:space="preserve" font-size="4.48421144px" line-height="125%" font-style="normal" font-weight="normal" fill="#ffffff"><flowRegion id="flowRegion4540"><rect id="rect4542" height="5.6378" width="10.298" y="85.106" x="36.879" fill="#FFF"/></flowRegion><flowPara id="flowPara4544" style="text-anchor:middle;text-align:center;" font-family="Serif" font-size="4.48421144px" font-style="normal" font-stretch="normal" font-variant="normal" font-weight="bold">Portfolio</flowPara></flowRoot>
+  <g id="text4831" style="letter-spacing:0px;word-spacing:0px;" font-weight="bold" transform="scale(1.045312,0.95665218)" font-stretch="normal" line-height="0%" font-size="82.92314148px" font-variant="normal" font-family="Sans" font-style="normal" fill="#FFF">
+   <path id="path3008" d="m134.65,970.11c-2.8613,1.4846-5.8441,2.6048-8.9482,3.3607-3.1043,0.75581-6.3434,1.1337-9.7176,1.1337-10.068,0-18.045-2.8073-23.929-8.4219-5.8845-5.6416-8.8268-13.281-8.8268-22.917-0.000004-9.6635,2.9423-17.303,8.8268-22.917,5.8845-5.6415,13.861-8.4623,23.929-8.4624,3.3741,0.00006,6.6133,0.37797,9.7176,1.1337,3.1042,0.75586,6.0869,1.8761,8.9482,3.3606v12.511c-2.8883-1.9704-5.7361-3.4146-8.5434-4.3324-2.8073-0.91772-5.7631-1.3766-8.8673-1.3766-5.5606,0.00005-9.9335,1.7816-13.119,5.3446-3.1852,3.5632-4.7778,8.4759-4.7778,14.738-0.00002,6.2354,1.5926,11.135,4.7778,14.698,3.1852,3.5631,7.5581,5.3447,13.119,5.3447,3.1042,0.00001,6.0599-0.45888,8.8673-1.3767,2.8072-0.91775,5.655-2.3619,8.5434-4.3324v12.511"/>
+   <path id="path3010" d="m140.4,912.98,15.67,0,16.034,44.62,15.993-44.62,15.67,0-22.391,60.451-18.585,0-22.391-60.451"/>
+  </g>
+ </g>
+</svg>

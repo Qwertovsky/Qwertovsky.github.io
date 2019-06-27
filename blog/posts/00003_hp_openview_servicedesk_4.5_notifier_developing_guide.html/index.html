@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta content="Qwertovsky" name="author">
+  <link href="mailto:valery@qwertovsky.com" rel="author">
+  <meta content="Qwertovsky, Qwertoblog, Квертовский" name="keywords">
+  <meta content="Qwertovsky blog" name="description">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="/blog/favicon.svg">
+  <title>OV SD 4.5 Notifier: Менеджер уведомлений для HP OpenView Service Desk (краткое техническое описание) | QwertoBlog</title>
+  
+    <link href="/blog/css/app.f0de77ac.css" rel="stylesheet">
+  
+</head>
+
+<body>
+  <div id="app"><div id="pageHeader"><a href="/blog/" class="qm_brand router-link-active">QwertoBlog</a><div></div><a href="/blog/tag" class="qm_nav_link tags_link" tabindex="0">Tags</a><a tabindex="0" href="//qwertovsky.com" class="qm_nav_link site_link">Site</a></div><section id="centerPart"><div class="post"><div class="post_title"><span>OV SD 4.5 Notifier: Менеджер уведомлений для HP OpenView Service Desk (краткое техническое описание)</span></div><div class="post_meta"> 2011-12-02 <span><span> | <a href="/blog/tag/java" class="">java</a></span><span> | <a href="/blog/tag/ovsd45notifier" class="">ovsd45notifier</a></span></span></div><div class="post_content"><div>Описание программы находится на Хабрахабре.<br>
+Скачать руководство пользователя и саму программу можно
+с <a href="http://bitbucket.org/qwertovsky/ovsd45notifier/downloads">Bitbucket</a>.<br>
+Данная статья содержит технические детали реализации программы.
+Она будет полезна тем, кто захочет адаптировать её для своей организации.<br> <h4>Необходимые библиотеки и файлы</h4>
+Программа основана на web-api.<br>
+Поэтому для начала требуется его сгенерировать. Выполняем скрипт:<br> <pre class=" language-text"><code class=" language-text">cd %SD_CLIENTHOME%
+mkdir webapi
+jview /cp lib/servicepack.jar; lib/util.jar; lib/hotfix.jar; lib/common.jar; lib/ui.jar; lib/JClark.zip com.hp.util.AppGenWebApi webapi</code></pre>
+, где <code>webapi</code> - каталог для сгенерированных исходных кодов.<br>
+В появившемся окне вводите свой логин и пароль и ждете завершения операции.<br>
+Далее по инструкции itsm008292.<br> <br>
+Для работы программы также понадобятся библиотеки: Log4j, JavaMail, SWT, Velocity.<br> <p>
+  В рабочем каталоге программы должны находится файлы:<br> <code>conf/log4j.xml</code> — настройки логирования<br> <code>conf/ovsd45notifier.properties</code> — настройки программы<br> <code>conf/mail.vm</code> — шаблон почтового уведомления<br> <code>log</code> — каталог для логирования.<br></p> <h4>Структура программы</h4>
+Программу можно разделить на четыре основные части.<br> <ol><li>Основной поток — это главный Shell программы.
+    По его части - иконка в области уведомлений, хранение полученных и не просмотренных уведомлений, отображение
+    уведомлений. Сюда можно отнести классы: <code>TrayManager</code>, <code>NoticeManager</code>, <code>Notification</code>.</li> <li>Мониторы — отвечают за получение заявок. Передают заявки для уведомления в <code>TrayManager</code> и в почту.</li> <li>Модуль работы с почтой — работает с почтой.</li> <li>Классы для работы с Service Desk — управление сессией, получение данных по заявке.</li></ol> <p>
+  Запуск программы происходит в классе <code>Notifier</code>. Он настраивает логирование,
+  создает <code>TrayManager</code>, запускает потоки мониторов.
+</p> <p>
+  TrayManager создает иконку в области уведомлений и ждет появления заявок. Заявки передаются от монитора с
+  помощью статического метода</p> <pre class=" language-java"><code class=" language-java"><span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">flash</span><span class="token punctuation">(</span><span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ServiceCall</span><span class="token punctuation">&gt;</span></span> serviceCalls<span class="token punctuation">)</span></code></pre> <p><code>TrayManager</code> сохраняет поступившие заявки и при необходимости удаляет их.
+  Для отображения заявок он обращается к <code>NoticeManager</code>.
+</p> <br> <img src="/blog/posts/00003/ovsd45notifier_live_dgr.be165fdd.svg"></div></div></div></section><footer id="page-footer"><div class="line"><a href="//www.qwertovsky.com" class="footer_logo"><img src="/blog/img/largeqwerto.176d8a1e.svg"></a><div class="copyright">Qwertovsky</div><div class="spacer"></div><div class="links"><a href="https://twitter.com/qwertovsky" class="twitter"><svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg></a><a href="mailto:valery@qwertovsky.com" class="mail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path></svg></a></div></div></footer></div>
+  
+    
+
+
+</body></html>
