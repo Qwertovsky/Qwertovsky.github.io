@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>GPS4TCX</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Qwertovsky" />
+	<meta name="keywords" content="GPS4TCX, add gps to TCX file" />
+	<meta name="description" content="Programm add GPS track to Garmin Training Center TCX file" />
+	<LINK href="styles/main.css" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+    
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+	<script src="http://api-maps.yandex.ru/2.0/?load=package.full&lang=ru-RU" type="text/javascript"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/main_ymap.js"></script>
+    <script>
+
+		Common.initYandex();
+
+    </script>
+  </head>
+  <body>
+    <div>
+	
+		<div id="left-panel">
+			<div class="panel">
+			
+				<div class="panel-header">
+					<div class="panel-header-text">TCX file</div>
+				</div>
+				<input style="width:100%" type="file" onchange="Ymap.getActivityInformation(files[0])" size="15"/> <br />
+			</div>
+			<div class="panel">
+				<div class="panel-header">
+					<div class="panel-header-text">Activity information</div>
+				</div>
+				
+				Sport: <span id="sportName"></span><br />
+				Date: <span id="activityDate"></span><br />
+				Time: <span id="activityTime"></span><br />
+				Distance: <span id="activityDistance"></span><br />
+			</div>
+			
+			<div class="panel">
+				<div class="panel-header">
+					<div class="panel-header-text">Routes</div>
+				</div>
+				
+				<table id="routeTable" border="1px" cellspacing="0" cellpadding="2" width="100%">
+					<tr><th>Offset</th><th>Distance</th><th></th></tr>
+					<tr id="emptyRouteRow" style="display:none;">
+						<td></td>
+						<td></td>
+						<td width="16">
+							<a title="Delete" href="#" onClick="Ymap.removeRoute(this.parentNode.parentNode.rowIndex)">
+								<img style="display:block; " alt="del" src="images/delete.gif"/>
+							</a>
+						</td>
+					</tr>
+					<tr><td></td><td></td><td></td></tr>
+				</table>
+			</div>
+		</div>
+		
+		<div id="right-panel">
+			<div id="map-canvas"></div>
+			<div id="distance-offset">
+				Distance(m): <span id="distance">0</span>; Offset(m): <input id="offset" type="number" value="0" style="width:70px;"/>
+				<a href="#" onClick="Ymap.addPathToRoutes()" class="button">Add</a>
+				<a href="#" onClick="Ymap.clearMap()" class="button">Clear map</a>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<div style="margin: 0 15px;">
+			<a href="#" class="button" onClick="Ymap.saveTCX()">Save</a>
+		</div>
+	</div>
+  </body>
+
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="utf-8">
+  <meta content="Qwertovsky" name="author">
+  <link href="mailto:valery@qwertovsky.com" rel="author">
+  <meta content="Qwertovsky, Qwertoblog, Квертовский" name="keywords">
+  <meta content="Qwertovsky blog" name="description">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="/blog/favicon.svg">
+  <title>Reduce the size of Vue.js application | QwertoBlog</title>
+  
+    <link href="/blog/css/app.789cbcde.css" rel="stylesheet">
+  
+</head>
+
+<body>
+  <div id="app"><div id="pageHeader"><a href="/blog/" class="qm_brand router-link-active">QwertoBlog</a><div></div><a href="/blog/tag" class="qm_nav_link tags_link" tabindex="0">Tags</a><a tabindex="0" href="//qwertovsky.com" class="qm_nav_link site_link">Site</a></div><section id="centerPart"><div class="post"><div class="post_title"><span>Reduce the size of Vue.js application</span></div><div class="post_meta"> 2020-09-12 <span><span> | <a href="/blog/tag/vue.js" class="">vue.js</a></span><span> | <a href="/blog/tag/js" class="">js</a></span><span> | <a href="/blog/tag/frontend" class="">frontend</a></span></span></div><div class="post_content"><div><p>When I build my app Vue.js CLI shows result:</p> <pre class="language-sh"><code class="language-sh">File                                 Size               Gzipped
+
+dist/js/chunk-vendors.ead599c9.js    1910.45 kb         603.09 kb
+dist/js/index.4ca2cadd.js            201.02 kb          39.30 kb
+dist/css/index.7cd5b102.css          39.22 kb           5.96 kb
+</code></pre><p>And it says:</p> <pre class="language-sh"><code class="language-sh">asset size limit: The following asset(s) exceed the recommended size limit (244 KiB).
+This can impact web performance.
+Assets: 
+  js/chunk-vendors.ead599c9.js (1.87 MiB)
+</code></pre><p>How can I make it better?</p> <h1>Report</h1> <p><code>vue-cli-service build</code> has a option <code>--report</code>. With this option CLI will create a chart to analyze chunks. Do</p> <pre class="language-sh"><code class="language-sh">npm run build -- --report
+</code></pre><p>And look for <code>report.html</code> in <code>dist</code> next to <code>index.html</code>.
+<img src="/blog/posts/00025/before.073beaaa.png"></p> <h1>Lazy load</h1> <p>Vue.js shows clue:</p> <pre class="language-sh"><code class="language-sh">You can limit the size of your bundles by using import() or require.ensure to lazy load some parts of your application.
+</code></pre><p>So I should try.</p> <pre class="language-js"><code class="language-js"><span class="token comment">//import CategoriesPie from "./CategoriesPie.vue";</span>
+<span class="token keyword">const</span> <span class="token function-variable function">CategoriesPie</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token keyword">import</span><span class="token punctuation">(</span><span class="token string">"./CategoriesPie.vue"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre><p>I made a lazy loading for my component with pie chart. This is only component that uses d3.js. This component was moved to separate chunk with d3.js.</p> <pre class="language-sh"><code class="language-sh"> dist/js/chunk-vendors.f939fa5f.js     1779.47 kb         559.93 kb
+ dist/js/index.65bb4e5c.js             198.29 kb          38.84 kb
+ dist/js/chunk-2d212bb5.d805fcb1.js    134.49 kb          44.36 kb
+</code></pre><img src="/blog/posts/00025/categories_pie_lazy.fed32fa1.png"> <p>I made all charts lazy, echarts was placed to own chunk. So <code>chunk-vendors.js</code> become smaller.</p> <pre class="language-sh"><code class="language-sh">  dist/js/chunk-vendors.734a58a9.js     1019.23 kb         279.97 kb
+  dist/js/chunk-66af4800.7362425e.js    760.38 kb          262.38 kb
+  dist/js/index.875f9c98.js             167.21 kb          36.46 kb
+  dist/js/chunk-2d212bb5.d805fcb1.js    134.49 kb          44.36 kb
+  dist/js/chunk-2d0d63b4.0506405e.js    6.31 kb            2.32 kb
+  dist/js/chunk-2d0e13c4.f023a52f.js    6.31 kb            2.32 kb
+  dist/js/chunk-2d21d469.ab31c3ce.js    4.78 kb            2.03 kb
+  dist/js/chunk-2d0ac42d.51d69f23.js    4.68 kb            2.00 kb
+  dist/js/chunk-2d0c19b3.493276cb.js    4.63 kb            1.86 kb
+  dist/js/chunk-2d225bc4.b29c0792.js    4.17 kb            1.93 kb
+  dist/js/chunk-2d0e57c2.f8d489f3.js    3.21 kb            1.60 kb
+</code></pre><p>The easiest way to reduce index.js size is lazy routes' components.
+Instead of</p> <pre class="language-js"><code class="language-js"><span class="token keyword">import</span> LoginPageContent <span class="token keyword">from</span> <span class="token string">"./components/registration/LoginPageContent.vue"</span>
+<span class="token comment">//...</span>
+routes<span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      path<span class="token operator">:</span> <span class="token string">"/login"</span><span class="token punctuation">,</span>
+      component<span class="token operator">:</span> LoginPageContent<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+</code></pre><p>I can do</p> <pre class="language-js"><code class="language-js">routes<span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      path<span class="token operator">:</span> <span class="token string">"/login"</span><span class="token punctuation">,</span>
+      <span class="token function-variable function">component</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token keyword">import</span><span class="token punctuation">(</span><span class="token string">"@/components/registration/LoginPageContent.vue"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+</code></pre><p>Lazy routes gave me that:</p> <pre class="language-sh"><code class="language-sh">  dist/js/chunk-5084c06d.6223e348.js      763.40 kb         263.57 kb
+  dist/js/chunk-vendors.c5bb7606.js       733.20 kb         184.75 kb
+  dist/js/chunk-3fbc4487.78bd1736.js      232.42 kb         70.34 kb
+  dist/js/chunk-7a13a3f8.77166654.js      134.55 kb         44.39 kb
+  dist/js/chunk-3e474084.c58c7fc5.js      77.68 kb          19.61 kb
+  dist/js/index.dada1dc3.js               32.73 kb          8.70 kb
+  ... more small components
+</code></pre><p><code>index.js</code> shrinked from 167 to 32 kb.
+<img src="/blog/posts/00025/routes_lazy.7e6934ca.png"></p> <p>Now I have 4 big chunks:</p> <ul><li>echarts</li> <li>vue.js + elementUI</li> <li>moment.js</li> <li>CategoriesPie + D3.js</li></ul> <h1>Don't import whole library</h1> <h2>ElementUI</h2> <p>For development I added all components from ElemetUI.</p> <pre class="language-js"><code class="language-js"><span class="token keyword">import</span> ElementUI <span class="token keyword">from</span> <span class="token string">"element-ui"</span><span class="token punctuation">;</span>
+Vue<span class="token punctuation">.</span><span class="token function">use</span><span class="token punctuation">(</span>ElementUI<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre><p>But I use just <code>Dialog</code> and <code>Notification</code>. So I should import these two.</p> <pre class="language-js"><code class="language-js"><span class="token keyword">import</span> <span class="token punctuation">{</span> Dialog<span class="token punctuation">,</span> Notification <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"element-ui"</span><span class="token punctuation">;</span>
+Vue<span class="token punctuation">.</span><span class="token function">component</span><span class="token punctuation">(</span>Dialog<span class="token punctuation">.</span>name<span class="token punctuation">,</span> Dialog<span class="token punctuation">)</span><span class="token punctuation">;</span>
+Vue<span class="token punctuation">.</span><span class="token function">component</span><span class="token punctuation">(</span>Notification<span class="token punctuation">.</span>name<span class="token punctuation">,</span> Notification<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre><p><code>babel-plugin-component</code> is needed.</p> <pre class="language-sh"><code class="language-sh">npm install -D babel-plugin-component
+</code></pre><p>Add this plugin to babel config.</p> <pre class="language-js has_file_name"><span class="file_name">babel.config.js</span><code class="language-js">module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token comment">// ...</span>
+  plugins<span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">[</span>
+      <span class="token string">"component"</span><span class="token punctuation">,</span>
+      <span class="token punctuation">{</span>
+        <span class="token string">"libraryName"</span><span class="token operator">:</span> <span class="token string">"element-ui"</span><span class="token punctuation">,</span>
+        <span class="token string">"styleLibraryName"</span><span class="token operator">:</span> <span class="token string">"theme-chalk"</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">]</span>
+  <span class="token comment">// ...</span>
+<span class="token punctuation">}</span>
+</code></pre><p><code>chunk-vendors.js</code> decreased from 733 to 141 kb.</p> <h2>Moment.js</h2> <p>Moment.js contains a lot of locales. I don't use them. Moment.js site has documentation how to remain only necessary locales.</p> <pre class="language-sh"><code class="language-sh">npm install -D moment-locales-webpack-plugin
+</code></pre><p>Add plugin to vue config.</p> <pre class="language-js has_file_name"><span class="file_name">vue.config.js</span><code class="language-js"><span class="token keyword">const</span> MomentLocalesPlugin <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'moment-locales-webpack-plugin'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">//...</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  configureWebpack<span class="token operator">:</span> <span class="token punctuation">{</span>
+    plugins<span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token keyword">new</span> <span class="token class-name">MomentLocalesPlugin</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+          localesToKeep<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><p>Moment.js is 77kb now. Was 232kb.</p> <h2>Echarts</h2> <p>This library documentation has instruction too.</p> <pre class="language-js has_file_name"><span class="file_name">echarts.custom.js</span><code class="language-js"><span class="token keyword">export</span> <span class="token operator">*</span> <span class="token keyword">from</span> <span class="token string">'echarts/src/echarts'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token string">'echarts/src/component/dataset'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token string">'echarts/src/chart/bar'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token string">'echarts/src/chart/treemap'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token string">'echarts/src/component/grid'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token string">'echarts/src/component/tooltip'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token string">'echarts/src/component/dataZoom'</span><span class="token punctuation">;</span>
+</code></pre><pre class="language-js has_file_name"><span class="file_name">rollup.echarts.config.js</span><code class="language-js"><span class="token keyword">import</span> node <span class="token keyword">from</span> <span class="token string">"rollup-plugin-node-resolve"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+  input<span class="token operator">:</span> <span class="token string">"echarts.custom.js"</span><span class="token punctuation">,</span>
+  plugins<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token function">node</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  output<span class="token operator">:</span> <span class="token punctuation">{</span>
+  	name<span class="token operator">:</span> <span class="token string">"echarts"</span><span class="token punctuation">,</span>
+    file<span class="token operator">:</span> <span class="token string">"./lib/echarts.custom.js"</span><span class="token punctuation">,</span>
+    format<span class="token operator">:</span> <span class="token string">"es"</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre><pre class="language-text has_file_name"><span class="file_name">.eslintignore</span><code class="language-text">lib/
+</code></pre><p>I should build my custom echarts before my application.</p> <pre class="language-sh"><code class="language-sh">rollup --config rollup.echarts.config.js
+</code></pre><p>And I will import the built result from <code>lib</code> folder.</p> <pre class="language-js has_file_name"><span class="file_name">vue.config.js</span><code class="language-js"><span class="token keyword">const</span> path <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'path'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  configureWebpack<span class="token operator">:</span> <span class="token punctuation">{</span>
+    resolve<span class="token operator">:</span> <span class="token punctuation">{</span>
+      alias<span class="token operator">:</span> <span class="token punctuation">{</span>
+        lib<span class="token operator">:</span> path<span class="token punctuation">.</span><span class="token function">resolve</span><span class="token punctuation">(</span>__dirname<span class="token punctuation">,</span> <span class="token string">'lib'</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><pre class="language-js"><code class="language-js"><span class="token comment">//import echarts from "echarts";</span>
+<span class="token keyword">import</span> <span class="token operator">*</span> <span class="token keyword">as</span> echarts <span class="token keyword">from</span> <span class="token string">"lib/echarts.custom.js"</span><span class="token punctuation">;</span>
+</code></pre><p>Echarts decreased from 763kb to 345kb. But it is still alot.</p> <h2>D3</h2> <p>I used the same approach that was used for Echarts.</p> <pre class="language-js has_file_name"><span class="file_name">d3.custom.js</span><code class="language-js"><span class="token keyword">export</span> <span class="token punctuation">{</span>
+ scaleLinear<span class="token punctuation">,</span>
+ scaleOrdinal<span class="token punctuation">,</span>
+ scaleSqrt
+<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-scale"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token punctuation">{</span> select <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-selection"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token punctuation">{</span> arc <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-shape"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token punctuation">{</span> transition <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-transition"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token punctuation">{</span> hierarchy<span class="token punctuation">,</span> partition <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-hierarchy"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token punctuation">{</span> formatLocale <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-format"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token punctuation">{</span> lab <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-color"</span><span class="token punctuation">;</span>
+<span class="token keyword">export</span> <span class="token punctuation">{</span> interpolate <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"d3-interpolate"</span><span class="token punctuation">;</span>
+</code></pre><pre class="language-js"><code class="language-js"><span class="token comment">//import * as d3 from "d3";</span>
+<span class="token keyword">import</span> <span class="token operator">*</span> <span class="token keyword">as</span> d3 <span class="token keyword">from</span> <span class="token string">"lib/d3.custom.js"</span><span class="token punctuation">;</span>
+</code></pre><p>Chart chunk now is 73kb (was 134kb).</p> <img src="/blog/posts/00025/after.cbad3483.png"> <h1>Conclusion</h1> <p>I reduced the full size from 2.1 to 0.9 MB. Problems now are echarts, moment.js and imask.<br>
+The main page is 33KB instead of 201KB. It is good.</p></div><!----></div></div></section><footer id="page-footer"><div class="line"><a href="//www.qwertovsky.com" class="footer_logo"><img src="/blog/img/largeqwerto.176d8a1e.svg"></a><div class="copyright">Qwertovsky</div><div class="spacer"></div><div class="links"><a href="https://twitter.com/qwertovsky" class="twitter"><svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg></a><a href="mailto:valery@qwertovsky.com" class="mail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path></svg></a></div></div></footer></div>
+  
+    
+
+
+</body></html>
