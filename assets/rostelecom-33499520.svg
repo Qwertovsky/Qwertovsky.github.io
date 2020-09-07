@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg xmlns:svg="http://www.w3.org/2000/svg"
+  xmlns="http://www.w3.org/2000/svg" viewBox="-25 0 145 170" version="1.1">
+  <g id="layer1" transform="translate(0,-129.89955)">
+    <g id="g2792" style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel" transform="matrix(1.6951506,0,0,1.6672259,-536.83273,116.95669)">
+      <g id="g2752" transform="matrix(0.268817,0,0,0.268817,316.602,8)" style="fill:#ff4f12;fill-opacity:1;stroke:none">
+        <path id="path2750" d="m 19.1899,369.67 c 0.22,0.09 0.44,0.19 0.67,0.27 0.23,0.08 0.43,0.13 0.73,0.2 2.6646,0.834 5.438,1.268 8.23,1.29 H 173.91 l -95.1501,-95.4 -0.05,0.05 c -17.6,17.49 -29.23,29 -37.8,37.58 -7.61,7.59 -12.81,12.81 -17.63,17.69 l -10.13,10.11 c -3.08,3.359 -4.78596,7.752 -4.78001,12.31 -0.00171,3.43 1.02952,6.781 2.95941,9.617 1.9299,2.836 4.669,5.026 7.8606,6.283" style="vector-effect:none;fill-rule:nonzero"/>
+      </g>
+      <g id="g2754" transform="matrix(0.268817,0,0,0.268817,316.602,8)" stroke-miterlimit="2" style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:2;stroke-opacity:1"/>
+      <g id="g2758" transform="matrix(0.268817,0,0,0.268817,316.602,8)" style="fill:#7700ff;fill-opacity:1;stroke:none">
+        <path id="path2756" d="m 8.35991,353.79 c -0.00594,-4.557 1.69999,-8.951 4.77999,-12.31 l 10.13,-10.11 c 4.82,-4.88 10,-10.1 17.63,-17.69 8.57,-8.54 20.2,-20.09 37.8,-37.58 l 0.05,-0.05 17.15,-17.07 0.35,-0.34 C 124.73,230.32 165.25,189.97 224.75,130.72 L 94.0899,0 l -74,74.06 C -2.00009,96.16 0.999911,110.63 0.999911,140.33 v 203.19 c -2.36e-4,5.694 1.742649,11.253 4.994419,15.927 3.25177,4.675 7.85657,8.242 13.19557,10.223 -3.1903,-1.254 -5.9293,-3.44 -7.8608,-6.272 -1.93152,-2.832 -2.9661,-6.18 -2.96919,-9.608" style="vector-effect:none;fill-rule:nonzero"/>
+      </g>
+      <g id="g2760" transform="matrix(0.268817,0,0,0.268817,316.602,8)" stroke-miterlimit="2" style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:2;stroke-opacity:1"/>
+    </g>
+  </g>
+</svg>

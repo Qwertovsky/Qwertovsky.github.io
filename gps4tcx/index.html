@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>GPS4TCX</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Qwertovsky" />
+	<meta name="keywords" content="GPS4TCX, add gps to TCX file" />
+	<meta name="description" content="Programm add GPS track to Garmin Training Center TCX file" />
+	<LINK href="styles/main.css" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="//maps.googleapis.com/maps/api/js?v=3.23&sensor=true&key=AIzaSyBeEXVXXeng-wj5DG-WdQR0XmjOTMMla-8"></script>
+	<script src="//api-maps.yandex.ru/2.0/?apikey=bebf55a5-b5c7-4b95-b397-addfbfeac6d6&load=package.full&lang=ru-RU" type="text/javascript"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/main_gmap.js"></script>
+	<script type="text/javascript" src="js/main_ymap.js"></script>
+    <script>
+
+
+		window.onload = Common.initGoogle;
+
+
+    </script>
+  </head>
+  <body>
+    <div>
+
+		<div id="left-panel">
+			<div class="panel">
+
+				<div class="panel-header">
+					<div class="panel-header-text">TCX file</div>
+				</div>
+				<input style="width:100%" type="file" onchange="Common.getActivityInformation(files[0])" size="15"/> <br />
+			</div>
+			<div class="panel">
+				<div class="panel-header">
+					<div class="panel-header-text">Activity information</div>
+				</div>
+
+				<span class="label">Sport: </span> <span id="sportName"></span><br />
+				<span class="label">Date: </span> <span id="activityDate"></span><br />
+				<span class="label">Time: </span> <span id="activityTime"></span><br />
+				<span class="label">Distance: </span> <span id="activityDistance"></span><br />
+			</div>
+
+			<div class="panel">
+				<div class="panel-header">
+					<div class="panel-header-text">Routes</div>
+				</div>
+
+				<table id="routeTable" border="1px" cellspacing="0" cellpadding="2" width="100%">
+					<tr><th>Offset</th><th>Distance</th><th></th></tr>
+					<tr id="emptyRouteRow" style="display:none;">
+						<td></td>
+						<td></td>
+						<td width="16">
+							<a title="Delete" href="#" onClick="Common.removeRoute(this.parentNode.parentNode.rowIndex)">
+								<img style="display:block; " alt="del" src="img/delete.gif"/>
+							</a>
+						</td>
+					</tr>
+					<tr><td></td><td></td><td></td></tr>
+				</table>
+			</div>
+		</div>
+
+		<div id="right-panel">
+			<div id="map-canvas"></div>
+			<div id="distance-offset">
+				<span class="label">Distance(m): </span> <span id="distance">0</span>;
+				<span class="label">Offset(m): </span> <input id="offset" type="number" value="0" style="width:70px;"/>
+				<a href="#" onClick="Common.addPathToRoutes()" class="button">Add</a>
+				<a href="#" onClick="Common.clearMap()" class="button">Clear map</a>
+				<input class="map_choice_button" type="button" value="Google"
+				 onclick="Common.initGoogle();" />
+				<input class="map_choice_button" type="button" value="Yandex"
+				 onclick="Common.initYandex();" />
+			</div>
+		</div>
+
+	</div>
+
+	<div id="footer">
+		<div style="margin: 0 15px;">
+			<a href="#" class="button" onClick="Common.saveTCX()">Save</a>
+		</div>
+	</div>
+  </body>
+
+</html>

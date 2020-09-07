@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/blog/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jakarta Faces и Spring Boot | Qwertoblog</title>
+
+    <link rel="stylesheet" href="/blog/assets/index-dbbc22e1.css" />
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true">
+      <div id="appWrap">
+        <div id="pageHeader">
+          <a href="/blog/" class="qm_brand">QwertoBlog</a>
+          <div></div>
+          <a href="/blog/tag" class="qm_nav_link tags_link" tabindex="0">Tags</a
+          ><a class="qm_nav_link site_link" tabindex="0" href="//qwertovsky.com"
+            >Site</a
+          >
+        </div>
+        <section id="centerPart">
+          <div class="post">
+            <div class="post_title">
+              <span>Jakarta Faces и Spring Boot</span>
+            </div>
+            <div class="post_meta">
+              2023-05-18
+              <span
+                ><!--[--><span>
+                  | <a href="/blog/tag/java" class="">java</a></span
+                ><span> | <a href="/blog/tag/backend" class="">backend</a></span
+                ><span> | <a href="/blog/tag/jsf" class="">jsf</a></span
+                ><span> | <a href="/blog/tag/spring" class="">spring</a></span
+                ><!--]--></span
+              >
+            </div>
+            <div class="post_content">
+              <div>
+                <div>
+                  <div>
+                    <p>
+                      Spring Boot работает с Tomcat Embed. Tomcat не включает в
+                      себя поддержку Jakarta Faces. Не смотря на это, возможно
+                      добавить нужные зависимости и использовать Faces. Эта
+                      статья о том, какая конфигурация нужна для запуска Jakarta
+                      Faces вместе со Spring Boot.
+                    </p>
+                    <!---->
+                    <h2>Tomcat</h2>
+                    <p>
+                      В первую очередь я хочу посмотреть как обычное
+                      веб-приложение с Jakarta Faces запустится на полном
+                      Tomcat. Для этого случая Mojarra README
+                      <a href="https://github.com/eclipse-ee4j/mojarra"
+                        >рекомендует</a
+                      >
+                      добавить зависимость
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.jboss.weld.servlet<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>weld-servlet-shaded<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>4.0.0.Final<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      Эта библиотека включает Jakarta API. И это вызывает
+                      проблему. Tomcat уже включает в себя библиотеки с Jakarta
+                      API. Но код там отличается. Во время дебага IDE будет
+                      показывать неправильные строки на этих классах. Поэтому я
+                      должен исключить эти API из зависимостей. Моя версия
+                      выглядит так
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.apache.myfaces.core<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>myfaces-impl<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>4.0.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>jakarta.servlet<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>jakarta.servlet-api<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>6.0.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>scope</span><span class="token punctuation">&gt;</span></span>provided<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>scope</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.jboss.weld.servlet<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>weld-servlet-core<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>5.1.0.Final<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>exclusions</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>exclusion</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>jakarta.el<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>jakarta.el-api<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>exclusion</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>exclusion</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>jakarta.annotation<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>jakarta.annotation-api<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>exclusion</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>exclusions</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      Зависимость <code>weld-servlet-core</code> включает
+                      листенер для контейнера, который инициализирует CDI.
+                      Зависимость <code>myfaces-impl</code> сама создает
+                      FacesServlet.
+                    </p>
+                    <p>
+                      Мне остается создать инициалайзер, чтобы добавить
+                      параметры в контекст.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Set</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>application<span class="token punctuation">.</span></span><span class="token class-name">ProjectStage</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span></span><span class="token class-name">UIInput</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContainerInitializer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletException</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">WebListener</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@WebListener</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ConfigureListener</span> <span class="token keyword">implements</span> <span class="token class-name">ServletContainerInitializer</span> <span class="token punctuation">{</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">onStartup</span><span class="token punctuation">(</span><span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span> classes<span class="token punctuation">,</span> <span class="token class-name">ServletContext</span> context<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ServletException</span> <span class="token punctuation">{</span>
+        context<span class="token punctuation">.</span><span class="token function">setInitParameter</span><span class="token punctuation">(</span><span class="token class-name">UIInput</span><span class="token punctuation">.</span><span class="token constant">EMPTY_STRING_AS_NULL_PARAM_NAME</span><span class="token punctuation">,</span> <span class="token class-name">Boolean</span><span class="token punctuation">.</span><span class="token constant">TRUE</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        context<span class="token punctuation">.</span><span class="token function">setInitParameter</span><span class="token punctuation">(</span><span class="token class-name">ProjectStage</span><span class="token punctuation">.</span><span class="token constant">PROJECT_STAGE_PARAM_NAME</span><span class="token punctuation">,</span> <span class="token class-name">ProjectStage<span class="token punctuation">.</span>Development</span><span class="token punctuation">.</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>На этом все. Теперь могу создавать xhtml и бины.</p>
+                    <h2>Spring Boot</h2>
+                    <p>
+                      Теперь можно пробовать Spring Boot. Я использовал
+                      <a href="https://start.spring.io/">Spring Initializr</a>
+                      для создания jar-проекта.
+                    </p>
+                    <p>Добавлю зависимость спринга для веба:</p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>spring-boot-starter-web<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>Можно удалить provided-зависимость для servlet api</p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>jakarta.servlet<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>jakarta.servlet-api<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>6.0.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>scope</span><span class="token punctuation">&gt;</span></span>provided<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>scope</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      WEBROOT для Tomcat embedded -
+                      <code>/META-INF/resources</code>. Я добавил эту директорию
+                      в <code>/src/main/resources</code>. Теперь можно создать
+                      тестовую страницу.
+                      /src/main/resources/META-INF/resources/hello.xhtml
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span>
+    <span class="token attr-name">xmlns</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://jakarta.ee/xml/ns/jakartaee<span class="token punctuation">"</span></span>
+    <span class="token attr-name"><span class="token namespace">xmlns:</span>f</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>jakarta.faces.core<span class="token punctuation">"</span></span>
+    <span class="token attr-name"><span class="token namespace">xmlns:</span>h</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>jakarta.faces.html<span class="token punctuation">"</span></span>
+    <span class="token attr-name"><span class="token namespace">xmlns:</span>c</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>jakarta.tags.core<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>Hello World<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>outputScript</span> <span class="token attr-name">library</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>js<span class="token punctuation">"</span></span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>demo.js<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token namespace">h:</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello World<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>form</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>helloForm<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>inputText</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>number<span class="token punctuation">"</span></span>
+            <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>#{helloBacking.number}<span class="token punctuation">"</span></span>
+            <span class="token attr-name">onblur</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>demoLog(event.target.value)<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token namespace">h:</span>inputText</span><span class="token punctuation">&gt;</span></span>
+
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>commandButton</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>submitBtn<span class="token punctuation">"</span></span>
+            <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Submit<span class="token punctuation">"</span></span>
+            <span class="token attr-name">type</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>button<span class="token punctuation">"</span></span>
+            <span class="token attr-name">action</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>#{helloBacking.submit}<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">f:</span>ajax</span> <span class="token attr-name">execute</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>@form<span class="token punctuation">"</span></span> <span class="token attr-name">render</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>output messages<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token namespace">h:</span>commandButton</span><span class="token punctuation">&gt;</span></span>
+
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>outputText</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>output<span class="token punctuation">"</span></span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>#{helloBacking.number}<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>messages</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>messages<span class="token punctuation">"</span></span> <span class="token attr-name">showSummary</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>true<span class="token punctuation">"</span></span> <span class="token attr-name">showDetail</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>true<span class="token punctuation">"</span></span><span class="token punctuation">/&gt;</span></span>
+
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token namespace">h:</span>form</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token namespace">h:</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>Вы можете видеть здесь скрипт</p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>outputScript</span> <span class="token attr-name">library</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>js<span class="token punctuation">"</span></span> <span class="token attr-name">name</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>demo.js<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+</code></pre>
+                    <p>
+                      Это означает, что он в файле
+                      <code>/META-INF/resources/resources/js/demo.js</code>. Я
+                      вызываю функцию <code>demoLog</code> из этого файла на
+                      событие blur.
+                    </p>
+                    <p>Бин для страницы:</p>
+                    <pre
+                      class="language-java has_file_name"
+                    ><span class="file_name">HelloBacking.java</span><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>example<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>backing</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>enterprise<span class="token punctuation">.</span>context<span class="token punctuation">.</span></span><span class="token class-name">SessionScoped</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>inject<span class="token punctuation">.</span></span><span class="token class-name">Named</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Named</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token string">"helloWorld"</span><span class="token punctuation">)</span>
+<span class="token annotation punctuation">@SessionScoped</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">HelloWorld</span> <span class="token keyword">implements</span> <span class="token class-name">Serializable</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token class-name">BigDecimal</span> number<span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">submit</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>number<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">BigDecimal</span> <span class="token function">getNumber</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> number<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setNumber</span><span class="token punctuation">(</span><span class="token class-name">BigDecimal</span> number<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>number <span class="token operator">=</span> number<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</code></pre>
+                    <p>
+                      Еще два файла для конфигураций
+                      /src/main/resources/META-INF/beans.xml
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token prolog">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>beans</span>
+    <span class="token attr-name">xmlns</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://jakarta.ee/xml/ns/jakartaee<span class="token punctuation">"</span></span>
+    <span class="token attr-name"><span class="token namespace">xmlns:</span>xsi</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://www.w3.org/2001/XMLSchema-instance<span class="token punctuation">"</span></span>
+    <span class="token attr-name"><span class="token namespace">xsi:</span>schemaLocation</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://jakarta.ee/xml/ns/jakartaee
+        https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd<span class="token punctuation">"</span></span>
+    <span class="token attr-name">version</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>4.0<span class="token punctuation">"</span></span> <span class="token attr-name">bean-discovery-mode</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>annotated<span class="token punctuation">"</span></span>
+<span class="token punctuation">&gt;</span></span>
+    <span class="token comment">&lt;!-- CDI configuration here. --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>beans</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      /src/main/resources/META-INF/resources/WEB-INF/faces-config.xml
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token prolog">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>faces-config</span>
+    <span class="token attr-name">xmlns</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://jakarta.ee/xml/ns/jakartaee<span class="token punctuation">"</span></span>
+    <span class="token attr-name"><span class="token namespace">xmlns:</span>xsi</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>http://www.w3.org/2001/XMLSchema-instance<span class="token punctuation">"</span></span>
+    <span class="token attr-name"><span class="token namespace">xsi:</span>schemaLocation</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://jakarta.ee/xml/ns/jakartaee
+        https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd<span class="token punctuation">"</span></span>
+    <span class="token attr-name">version</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>4.0<span class="token punctuation">"</span></span>
+<span class="token punctuation">&gt;</span></span>
+    <span class="token comment">&lt;!-- Faces configuration here. --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>faces-config</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      И это все не работает. Сервер возвращает мой xhtml. Это
+                      означает, что нет faces servlet. Здесь проявляется разница
+                      с Tomcat. Спринговая версия
+                      <a
+                        href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#web.servlet.embedded-container.context-initializer"
+                        >не вызывает</a
+                      >
+                      классы
+                      <code>jakarta.servlet.ServletContainerInitializer</code>.
+                      Я должен создать спринговый бин
+                      <code
+                        >org.springframework.boot.web.servlet.ServletContextInitializer</code
+                      >
+                      для запуска их самостоятельно.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>boot<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContextInitializer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>context<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Bean</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>context<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Configuration</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Configuration</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Config</span> <span class="token punctuation">{</span>
+    <span class="token annotation punctuation">@Bean</span>
+    <span class="token keyword">public</span> <span class="token class-name">ServletContextInitializer</span> <span class="token function">jsfInitializer</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">JsfInitializer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Есть два <code>ServletContainerInitializer</code>, которые
+                      надо запустить. Для CDI - это
+                      <code
+                        >org.jboss.weld.environment.servlet.EnhancedListener</code
+                      >. Для MyFaces -
+                      <code
+                        >org.apache.myfaces.webapp.MyFacesContainerInitializer</code
+                      >.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>myfaces<span class="token punctuation">.</span>webapp<span class="token punctuation">.</span></span><span class="token class-name">MyFacesContainerInitializer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>jboss<span class="token punctuation">.</span>weld<span class="token punctuation">.</span>environment<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">EnhancedListener</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>boot<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContextInitializer</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>application<span class="token punctuation">.</span></span><span class="token class-name">ProjectStage</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span></span><span class="token class-name">UIInput</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContainerInitializer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletException</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">JsfInitializer</span> <span class="token keyword">implements</span> <span class="token class-name">ServletContextInitializer</span> <span class="token punctuation">{</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">onStartup</span><span class="token punctuation">(</span><span class="token class-name">ServletContext</span> context<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">ServletException</span> <span class="token punctuation">{</span>
+        context<span class="token punctuation">.</span><span class="token function">setInitParameter</span><span class="token punctuation">(</span><span class="token class-name">UIInput</span><span class="token punctuation">.</span><span class="token constant">EMPTY_STRING_AS_NULL_PARAM_NAME</span><span class="token punctuation">,</span> <span class="token class-name">Boolean</span><span class="token punctuation">.</span><span class="token constant">TRUE</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        context<span class="token punctuation">.</span><span class="token function">setInitParameter</span><span class="token punctuation">(</span><span class="token class-name">ProjectStage</span><span class="token punctuation">.</span><span class="token constant">PROJECT_STAGE_PARAM_NAME</span><span class="token punctuation">,</span> <span class="token class-name">ProjectStage<span class="token punctuation">.</span>Development</span><span class="token punctuation">.</span><span class="token function">name</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">EnhancedListener</span> cdiInitializer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EnhancedListener</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        cdiInitializer<span class="token punctuation">.</span><span class="token function">onStartup</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">ServletContainerInitializer</span> myFacesInitializer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">MyFacesContainerInitializer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        myFacesInitializer<span class="token punctuation">.</span><span class="token function">onStartup</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>После этого новая ошибка. Уже от FacesServlet:</p>
+                    <blockquote>
+                      <p>
+                        Servlet.init() for servlet [FacesServlet] threw
+                        exception <br />
+                        java.lang.IllegalStateException: No Factories configured
+                        for this Application. This happens if the
+                        faces-initialization does not work at all - make sure
+                        that you properly include all configuration settings
+                        necessary for a basic faces application and that all the
+                        necessary libs are included. Also check the logging
+                        output of your web application and your container for
+                        any exceptions! <br />
+                        If you did that and find nothing, the mistake might be
+                        due to the fact that you use some special web-containers
+                        which do not support registering context-listeners via
+                        TLD files and a context listener is not setup in your
+                        web.xml. A typical config looks like this;
+                      </p>
+                      <pre
+                        class="language-xml"
+                      ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>listener</span><span class="token punctuation">&gt;</span></span>
+   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>listener-class</span><span class="token punctuation">&gt;</span></span>org.apache.myfaces.webapp.StartupServletContextListener<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>listener-class</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>listener</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    </blockquote>
+                    <p>
+                      Это происходит, потому что Spring не сканирует classpath
+                      на наличие servlet-аннотаций и
+                      <code>web-fragment.xml</code>. Поэтому я должен добавить
+                      еще один спринговый бин в конфигурацию
+                      <code>Config.java</code>.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>myfaces<span class="token punctuation">.</span>webapp<span class="token punctuation">.</span></span><span class="token class-name">StartupServletContextListener</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>boot<span class="token punctuation">.</span>web<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletListenerRegistrationBean</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>context<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Bean</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContextListener</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Bean</span>
+<span class="token keyword">public</span> <span class="token class-name">ServletListenerRegistrationBean</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ServletContextListener</span><span class="token punctuation">&gt;</span></span> <span class="token function">facesStartupServletContextListener</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">ServletListenerRegistrationBean</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ServletContextListener</span><span class="token punctuation">&gt;</span></span> bean <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ServletListenerRegistrationBean</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    bean<span class="token punctuation">.</span><span class="token function">setListener</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">StartupServletContextListener</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> bean<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>Теперь страница работает.</p>
+                    <h2>Customize faces config</h2>
+                    <p>
+                      Добавлю что-нибудь в <code>faces-config.xml</code> для
+                      проверки. Я хочу добавить слушателя для ELContext и
+                      добавить событие в Java Flight Recorder.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jdk<span class="token punctuation">.</span>jfr<span class="token punctuation">.</span></span><span class="token class-name">Event</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jdk<span class="token punctuation">.</span>jfr<span class="token punctuation">.</span></span><span class="token class-name">Label</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jdk<span class="token punctuation">.</span>jfr<span class="token punctuation">.</span></span><span class="token class-name">Name</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Name</span><span class="token punctuation">(</span><span class="token string">"com.example.faces.EvaluateExpression"</span><span class="token punctuation">)</span>
+<span class="token annotation punctuation">@Label</span><span class="token punctuation">(</span><span class="token string">"Evaluate Expression"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">EvaluateExpressionEvent</span> <span class="token keyword">extends</span> <span class="token class-name">Event</span> <span class="token punctuation">{</span>
+	
+	<span class="token annotation punctuation">@Label</span><span class="token punctuation">(</span><span class="token string">"Expression"</span><span class="token punctuation">)</span>
+	<span class="token keyword">private</span> <span class="token class-name">String</span> expression<span class="token punctuation">;</span>
+
+	<span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getExpression</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">return</span> expression<span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+
+	<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setExpression</span><span class="token punctuation">(</span><span class="token class-name">String</span> expression<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">this</span><span class="token punctuation">.</span>expression <span class="token operator">=</span> expression<span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>el<span class="token punctuation">.</span></span><span class="token class-name">ELContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>example<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>event<span class="token punctuation">.</span></span><span class="token class-name">EvaluateExpressionEvent</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">EvaluationListener</span> <span class="token keyword">extends</span> <span class="token class-name"><span class="token namespace">jakarta<span class="token punctuation">.</span>el<span class="token punctuation">.</span></span>EvaluationListener</span> <span class="token punctuation">{</span>
+	
+	<span class="token keyword">private</span> <span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">EvaluateExpressionEvent</span><span class="token punctuation">&gt;</span></span> event <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">beforeEvaluation</span><span class="token punctuation">(</span><span class="token class-name">ELContext</span> context<span class="token punctuation">,</span> <span class="token class-name">String</span> expression<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token class-name">EvaluateExpressionEvent</span> event <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EvaluateExpressionEvent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		event<span class="token punctuation">.</span><span class="token function">setExpression</span><span class="token punctuation">(</span>expression<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		event<span class="token punctuation">.</span><span class="token function">begin</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token keyword">this</span><span class="token punctuation">.</span>event<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>event<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+	<span class="token annotation punctuation">@Override</span>
+	<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">afterEvaluation</span><span class="token punctuation">(</span><span class="token class-name">ELContext</span> context<span class="token punctuation">,</span> <span class="token class-name">String</span> expression<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		event<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		event<span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Теперь я должен как-то добавить его в ELContext. Я сделаю
+                      это во время создания. Еще один listener.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>el<span class="token punctuation">.</span></span><span class="token class-name">ELContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>el<span class="token punctuation">.</span></span><span class="token class-name">ELContextEvent</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ELContextListener</span> <span class="token keyword">implements</span> <span class="token class-name"><span class="token namespace">jakarta<span class="token punctuation">.</span>el<span class="token punctuation">.</span></span>ELContextListener</span> <span class="token punctuation">{</span>
+
+	<span class="token annotation punctuation">@Override</span>
+	<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">contextCreated</span><span class="token punctuation">(</span><span class="token class-name">ELContextEvent</span> event<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token class-name">ELContext</span> elContext <span class="token operator">=</span> event<span class="token punctuation">.</span><span class="token function">getELContext</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		elContext<span class="token punctuation">.</span><span class="token function">addEvaluationListener</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">EvaluationListener</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Я должен добавить его в <code>Application</code>. Еще один
+                      listener:
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>application<span class="token punctuation">.</span></span><span class="token class-name">Application</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>event<span class="token punctuation">.</span></span><span class="token class-name">AbortProcessingException</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>event<span class="token punctuation">.</span></span><span class="token class-name">SystemEvent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>event<span class="token punctuation">.</span></span><span class="token class-name">SystemEventListener</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ApplicationCreatedListener</span> <span class="token keyword">implements</span> <span class="token class-name">SystemEventListener</span> <span class="token punctuation">{</span>
+
+	<span class="token annotation punctuation">@Override</span>
+	<span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">isListenerForSource</span><span class="token punctuation">(</span><span class="token class-name">Object</span> source<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">return</span> source <span class="token keyword">instanceof</span> <span class="token class-name">Application</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+
+	<span class="token annotation punctuation">@Override</span>
+	<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">processEvent</span><span class="token punctuation">(</span><span class="token class-name">SystemEvent</span> event<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">AbortProcessingException</span> <span class="token punctuation">{</span>
+		<span class="token class-name">Application</span> application <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Application</span><span class="token punctuation">)</span> event<span class="token punctuation">.</span><span class="token function">getSource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		application<span class="token punctuation">.</span><span class="token function">addELContextListener</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ELContextListener</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Уже его я теперь могу прописать в
+                      <code>faces-config.xml</code>.
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>application</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>system-event-listener</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>system-event-listener-class</span><span class="token punctuation">&gt;</span></span>com.example.demo.listener.ApplicationCreatedListener<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>system-event-listener-class</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>system-event-class</span><span class="token punctuation">&gt;</span></span>jakarta.faces.event.PostConstructApplicationEvent<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>system-event-class</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>source-class</span><span class="token punctuation">&gt;</span></span>jakarta.faces.application.Application<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>source-class</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>system-event-listener</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>application</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      Теперь я могу наблюдать вычисления значений при рендеринге
+                      страницы в Java Mission Control. Это значит
+                      <code>face-config.xml</code> работает.
+                    </p>
+                    <h2>Валидатор и конвертер</h2>
+                    <p>Я могу добавить что-нибудь из аннотаций:</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span></span><span class="token class-name">FacesComponent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span>behavior<span class="token punctuation">.</span></span><span class="token class-name">FacesBehavior</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>convert<span class="token punctuation">.</span></span><span class="token class-name">FacesConverter</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>event<span class="token punctuation">.</span></span><span class="token class-name">NamedEvent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>render<span class="token punctuation">.</span></span><span class="token class-name">FacesBehaviorRenderer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>render<span class="token punctuation">.</span></span><span class="token class-name">FacesRenderer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>validator<span class="token punctuation">.</span></span><span class="token class-name">FacesValidator</span></span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      Я попробую <code>FacesValidator</code> и
+                      <code>FacesConverter</code> для моего input.
+                    </p>
+                    <p>Валидатор:</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>application<span class="token punctuation">.</span></span><span class="token class-name">FacesMessage</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span></span><span class="token class-name">UIComponent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>context<span class="token punctuation">.</span></span><span class="token class-name">FacesContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>validator<span class="token punctuation">.</span></span><span class="token class-name">FacesValidator</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>validator<span class="token punctuation">.</span></span><span class="token class-name">Validator</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>validator<span class="token punctuation">.</span></span><span class="token class-name">ValidatorException</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@FacesValidator</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token string">"demo.NumberValidator"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">NumberValidator</span> <span class="token keyword">implements</span> <span class="token class-name">Validator</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">BigDecimal</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">{</span>
+
+    <span class="token keyword">private</span> <span class="token class-name">Random</span> random <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Random</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">private</span> <span class="token class-name">BigDecimal</span> <span class="token function">getNumber</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">BigDecimal</span><span class="token punctuation">(</span>random<span class="token punctuation">.</span><span class="token function">nextDouble</span><span class="token punctuation">(</span><span class="token number">420</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setScale</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token class-name">RoundingMode</span><span class="token punctuation">.</span><span class="token constant">HALF_UP</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">validate</span><span class="token punctuation">(</span><span class="token class-name">FacesContext</span> context<span class="token punctuation">,</span> <span class="token class-name">UIComponent</span> component<span class="token punctuation">,</span> <span class="token class-name">BigDecimal</span> value<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">ValidatorException</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>value <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token class-name">BigDecimal</span> orig <span class="token operator">=</span> <span class="token function">getNumber</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>value<span class="token punctuation">.</span><span class="token function">compareTo</span><span class="token punctuation">(</span>orig<span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">ValidatorException</span><span class="token punctuation">(</span>
+                    <span class="token keyword">new</span> <span class="token class-name">FacesMessage</span><span class="token punctuation">(</span><span class="token class-name">FacesMessage</span><span class="token punctuation">.</span><span class="token constant">SEVERITY_ERROR</span><span class="token punctuation">,</span>
+                            <span class="token string">"Wrong number"</span><span class="token punctuation">,</span>
+                            <span class="token string">"Number "</span> <span class="token operator">+</span> value <span class="token operator">+</span> <span class="token string">" less than "</span> <span class="token operator">+</span> orig<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>Конвертер:</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span></span><span class="token class-name">UIComponent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>context<span class="token punctuation">.</span></span><span class="token class-name">FacesContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>convert<span class="token punctuation">.</span></span><span class="token class-name">Converter</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>convert<span class="token punctuation">.</span></span><span class="token class-name">ConverterException</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>convert<span class="token punctuation">.</span></span><span class="token class-name">FacesConverter</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@FacesConverter</span><span class="token punctuation">(</span>
+        value <span class="token operator">=</span> <span class="token string">"demo.BigDecimalConverter"</span><span class="token punctuation">,</span>
+        forClass <span class="token operator">=</span> <span class="token class-name">BigDecimal</span><span class="token punctuation">.</span><span class="token keyword">class</span>
+        <span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">BigDecimalConverter</span> <span class="token keyword">implements</span> <span class="token class-name">Converter</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">BigDecimal</span><span class="token punctuation">&gt;</span></span> <span class="token punctuation">{</span>
+
+    <span class="token keyword">private</span> <span class="token class-name">Random</span> random <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Random</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">private</span> <span class="token class-name">BigDecimal</span> <span class="token function">getNumber</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">BigDecimal</span><span class="token punctuation">(</span>random<span class="token punctuation">.</span><span class="token function">nextDouble</span><span class="token punctuation">(</span><span class="token number">420</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setScale</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token class-name">RoundingMode</span><span class="token punctuation">.</span><span class="token constant">HALF_UP</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">BigDecimal</span> <span class="token function">getAsObject</span><span class="token punctuation">(</span><span class="token class-name">FacesContext</span> context<span class="token punctuation">,</span> <span class="token class-name">UIComponent</span> component<span class="token punctuation">,</span> <span class="token class-name">String</span> value<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">ConverterException</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>value <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">||</span> value<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token function">getNumber</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">BigDecimal</span><span class="token punctuation">(</span>value<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setScale</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token class-name">RoundingMode</span><span class="token punctuation">.</span><span class="token constant">HALF_UP</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">NumberFormatException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">ConverterException</span><span class="token punctuation">(</span>e<span class="token punctuation">.</span><span class="token function">getMessage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getAsString</span><span class="token punctuation">(</span><span class="token class-name">FacesContext</span> context<span class="token punctuation">,</span> <span class="token class-name">UIComponent</span> component<span class="token punctuation">,</span> <span class="token class-name">BigDecimal</span> value<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">ConverterException</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>value <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token string">""</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> value<span class="token punctuation">.</span><span class="token function">toPlainString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>hello.xhtml</p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">h:</span>inputText</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>number<span class="token punctuation">"</span></span>
+            <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>#{helloBacking.number}<span class="token punctuation">"</span></span>
+            <span class="token attr-name">onblur</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>demoLog(event.target.value)<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">f:</span>converter</span> <span class="token attr-name">converterId</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>demo.BigDecimalConverter<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">f:</span>validator</span> <span class="token attr-name">validatorId</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>demo.NumberValidator<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span> 
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span><span class="token namespace">h:</span>inputText</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>И это не работает. Новая ошибка:</p>
+                    <blockquote>
+                      <p>
+                        Could not find any registered converter-class by
+                        converterId : demo.BigDecimalConverter
+                      </p>
+                    </blockquote>
+                    <blockquote>
+                      <p>Unknown validator id 'demo.NumberValidator'.</p>
+                    </blockquote>
+                    <p>
+                      Потому что MyFaces ищет классы с аннотациями в
+                      <code>/WEB-INF/classes</code> или в jar-файлах. Это не WAR
+                      и здесь нет <code>/WEB-INF/classes</code>. Я запускаю
+                      программу из IDE, поэтому мои классы не в jar. Если я
+                      соберу проект и запущу jar, тогда заработает. Но мне надо
+                      запускать в IDE тоже. Здесь три варианта решения проблемы.
+                    </p>
+                    <p>
+                      Во-первых, я могу имплементировать
+                      <code>org.apache.myfaces.spi.AnnotationProvider</code>
+                      применяя
+                      <code>ClassPathScanningCandidateComponentProvider</code>
+                      из спринга.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>beans<span class="token punctuation">.</span>factory<span class="token punctuation">.</span>config<span class="token punctuation">.</span></span><span class="token class-name">BeanDefinition</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>context<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">ClassPathScanningCandidateComponentProvider</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>core<span class="token punctuation">.</span>type<span class="token punctuation">.</span>filter<span class="token punctuation">.</span></span><span class="token class-name">AnnotationTypeFilter</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span></span><span class="token class-name">FacesComponent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>component<span class="token punctuation">.</span>behavior<span class="token punctuation">.</span></span><span class="token class-name">FacesBehavior</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>context<span class="token punctuation">.</span></span><span class="token class-name">ExternalContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>convert<span class="token punctuation">.</span></span><span class="token class-name">FacesConverter</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>event<span class="token punctuation">.</span></span><span class="token class-name">NamedEvent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>render<span class="token punctuation">.</span></span><span class="token class-name">FacesBehaviorRenderer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>render<span class="token punctuation">.</span></span><span class="token class-name">FacesRenderer</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>validator<span class="token punctuation">.</span></span><span class="token class-name">FacesValidator</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AnnotationProvider</span> <span class="token keyword">extends</span> <span class="token class-name"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>myfaces<span class="token punctuation">.</span>spi<span class="token punctuation">.</span></span>AnnotationProvider</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Annotation</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span> annotationsToScan<span class="token punctuation">;</span>
+
+    <span class="token keyword">static</span> <span class="token punctuation">{</span>
+        annotationsToScan <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashSet</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token number">7</span><span class="token punctuation">,</span> <span class="token number">1f</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        annotationsToScan<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">FacesComponent</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        annotationsToScan<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">FacesBehavior</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        annotationsToScan<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">FacesConverter</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        annotationsToScan<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">FacesValidator</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        annotationsToScan<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">FacesRenderer</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        annotationsToScan<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">NamedEvent</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        annotationsToScan<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">FacesBehaviorRenderer</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Annotation</span><span class="token punctuation">&gt;</span><span class="token punctuation">,</span> <span class="token class-name">Set</span><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span> <span class="token function">getAnnotatedClasses</span><span class="token punctuation">(</span><span class="token class-name">ExternalContext</span> ctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Annotation</span><span class="token punctuation">&gt;</span><span class="token punctuation">,</span> <span class="token class-name">Set</span><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span> result <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        
+        <span class="token class-name">ClassLoader</span> cl <span class="token operator">=</span> <span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Package</span><span class="token punctuation">[</span><span class="token punctuation">]</span> packages <span class="token operator">=</span> cl<span class="token punctuation">.</span><span class="token function">getDefinedPackages</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">Package</span> pack <span class="token operator">:</span> packages<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            pack<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token class-name">ClassPathScanningCandidateComponentProvider</span> provider <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ClassPathScanningCandidateComponentProvider</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Annotation</span><span class="token punctuation">&gt;</span></span> a <span class="token operator">:</span> annotationsToScan<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            provider<span class="token punctuation">.</span><span class="token function">addIncludeFilter</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">AnnotationTypeFilter</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">BeanDefinition</span><span class="token punctuation">&gt;</span></span> components <span class="token operator">=</span> provider<span class="token punctuation">.</span><span class="token function">findCandidateComponents</span><span class="token punctuation">(</span><span class="token string">"com.example.demo"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">BeanDefinition</span> c <span class="token operator">:</span> components<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span></span> clazz<span class="token punctuation">;</span>
+            <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                clazz <span class="token operator">=</span> cl<span class="token punctuation">.</span><span class="token function">loadClass</span><span class="token punctuation">(</span>c<span class="token punctuation">.</span><span class="token function">getBeanClassName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">ClassNotFoundException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">continue</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Annotation</span><span class="token punctuation">&gt;</span></span> a <span class="token operator">:</span> annotationsToScan<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token class-name">Annotation</span> an <span class="token operator">=</span> clazz<span class="token punctuation">.</span><span class="token function">getDeclaredAnnotation</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>an <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span> annotationSet <span class="token operator">=</span> result<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">if</span> <span class="token punctuation">(</span>annotationSet <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        annotationSet <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashSet</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                        result<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> annotationSet<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span>
+                    annotationSet<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>clazz<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span>URL<span class="token punctuation">&gt;</span></span> <span class="token function">getBaseUrls</span><span class="token punctuation">(</span><span class="token class-name">ExternalContext</span> ctx<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">IOException</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Зарегистрировать мой провайдер в файле
+                      src/main/resources/META-INF/services/org.apache.myfaces.spi.AnnotationProvider
+                    </p>
+                    <pre
+                      class="language-"
+                    ><code class="language-">com.example.demo.config.AnnotationProvider
+</code></pre>
+                    <p>Второй вариант - это добавить параметр в контекст.</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>myfaces<span class="token punctuation">.</span>config<span class="token punctuation">.</span>webparameters<span class="token punctuation">.</span></span><span class="token class-name">MyfacesConfig</span></span><span class="token punctuation">;</span>
+
+context<span class="token punctuation">.</span><span class="token function">setInitParameter</span><span class="token punctuation">(</span><span class="token class-name">MyfacesConfig</span><span class="token punctuation">.</span><span class="token constant">SCAN_PACKAGES</span><span class="token punctuation">,</span> <span class="token string">"com.example.demo"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      Этот параметр активирует другую логику сканирования.
+                      Примерно как в моем провайдере, но без спринга. Почему
+                      здесь два способа сканирования? Потому что загружать
+                      классы из всех зависимостей для проверки аннотаций - это
+                      накладно. Поэтому по умолчанию MyFaces только читает
+                      заголовки из скомпилированных *.class файлов и загружает
+                      только классы с нужными аннотациями. Или я должен указать
+                      явно пакеты для сканирования.
+                    </p>
+                    <p>Третий вариант - установить параметр:</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java">context<span class="token punctuation">.</span><span class="token function">setInitParameter</span><span class="token punctuation">(</span><span class="token class-name">MyfacesConfig</span><span class="token punctuation">.</span><span class="token constant">USE_CDI_FOR_ANNOTATION_SCANNING</span><span class="token punctuation">,</span> <span class="token class-name">Boolean</span><span class="token punctuation">.</span><span class="token constant">TRUE</span><span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      Теперь MyFaces обращается к CDI для поиска бинов с
+                      аннотациями. Но мои классы - не CDI-бины. Я должен
+                      добавить аннотацию <code>@Dependent</code> и тогда этот
+                      вариант заработает.
+                    </p>
+                    <h2>Инъекция бинов в конвертер и валидатор</h2>
+                    <p>
+                      Для тестирования я перенесу генератор чисел в репозиторий
+                      и сделаю его инъекцию в конвертер и валидатор.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token annotation punctuation">@Named</span>
+<span class="token annotation punctuation">@ApplicationScoped</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoRepository</span> <span class="token punctuation">{</span>
+
+	<span class="token keyword">private</span> <span class="token class-name">Random</span> random <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Random</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token keyword">public</span> <span class="token class-name">BigDecimal</span> <span class="token function">getNumber</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">BigDecimal</span><span class="token punctuation">(</span>random<span class="token punctuation">.</span><span class="token function">nextDouble</span><span class="token punctuation">(</span><span class="token number">420</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">setScale</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token class-name">RoundingMode</span><span class="token punctuation">.</span><span class="token constant">HALF_UP</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">BigDecimalConverter</span> <span class="token keyword">implements</span> <span class="token class-name">Converter</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">BigDecimal</span><span class="token punctuation">&gt;</span></span> <span class="token punctuation">{</span>
+    <span class="token annotation punctuation">@Inject</span>
+	<span class="token keyword">private</span> <span class="token class-name">DemoRepository</span> demoRepository<span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      Теперь у меня NPE. DemoRepository = null. Потому что
+                      конвертер не CDI-бин. Если вы используете CDI для
+                      сканирования, этого не достаточно. Сканирование только
+                      наполняет мапу с классами. Во время запроса MyFaces
+                      создает конвертер, используя конструктор без аргументов.
+                      Еще могут быть добавлены проперти из faces-config. Если
+                      конвертер регистрировался в конфиге. Это не мой случай.
+                      Чтобы экземпляр конвертера запрашивался из CDI, я должен
+                      добавить <code>managed = true</code> в аннотацию
+                      конвертера.
+                    </p>
+                    <p>Сразу после этого я получаю новую ошибку:</p>
+                    <blockquote>
+                      <p>
+                        Cannot invoke
+                        "jakarta.faces.convert.Converter.getAsString(jakarta.faces.context.FacesContext,
+                        jakarta.faces.component.UIComponent, Object)" because
+                        the return value of
+                        "org.apache.myfaces.cdi.wrapper.FacesConverterCDIWrapper.getWrapped()"
+                        is null
+                      </p>
+                    </blockquote>
+                    <p>
+                      CDI не знает таких бинов. Конвертер должен быть помечен
+                      аннотацией <code>@Dependent</code>. Пробую снова - таже
+                      ошибка. Бин существует, но CDI не находит его. Потому что
+                      конвертер должен иметь ID
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span><span class="token namespace">f:</span>converter</span> <span class="token attr-name">converterId</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>demo.BigDecimalConverter<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+</code></pre>
+                    <p>И Myfaces ищет конвертер по аннотации</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token annotation punctuation">@FacesConverter</span><span class="token punctuation">(</span>
+        value <span class="token operator">=</span> <span class="token string">"demo.BigDecimalConverter"</span><span class="token punctuation">,</span>
+        forClass <span class="token operator">=</span> <span class="token class-name">Object</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">,</span>
+        managed <span class="token operator">=</span> <span class="token boolean">true</span>
+        <span class="token punctuation">)</span>
+</code></pre>
+                    <p>
+                      Но у моего конвертера указано
+                      <code>forClass = BigDecimal.class</code>. В этом ошибка. Я
+                      должен удалить <code>forClass</code> у конвертера. Или я
+                      могу удалить тег <code>f:converter</code> и соответственно
+                      удалить <code>value</code> у конвертера. Что-то одно. Я
+                      удалил <code>forClass</code>. Это позволит мне
+                      использовать мой странный конвертер для инпутов с тегом и
+                      оставить стандартный конвертер для других BigDecimal
+                      полей.
+                    </p>
+                    <p>Теперь моя инъекция работает.</p>
+                    <h2>Инъекция сущностей Faces</h2>
+                    <p>
+                      Jakarta Faces добавляет в контекст такие сущности как
+                      <code>FacesContext</code>, <code>ExternalContext</code>,
+                      <code>ResourceHandler</code>, и другие. Давайте попробуем
+                      засетить в бин инит-параметры, которые я добавлял в моем
+                      инициалайзере.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">InitParameterMap</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Inject</span>
+<span class="token annotation punctuation">@InitParameterMap</span>
+<span class="token keyword">private</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">&gt;</span></span> initParam<span class="token punctuation">;</span>
+
+<span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"Empty as null = "</span> <span class="token operator">+</span> <span class="token keyword">this</span><span class="token punctuation">.</span>initParam<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token class-name">UIInput</span><span class="token punctuation">.</span><span class="token constant">EMPTY_STRING_AS_NULL_PARAM_NAME</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>Я получаю ошибку:</p>
+                    <blockquote>
+                      <p>
+                        ConfigServletWebServerApplicationContext : Exception
+                        encountered during context initialization - cancelling
+                        refresh attempt:
+                        org.springframework.beans.factory.UnsatisfiedDependencyException:
+                        Error creating bean with name 'helloBacking':
+                        Unsatisfied dependency expressed through field
+                        'initParam': No qualifying bean of type
+                        'java.util.Map&lt;java.lang.String,
+                        java.lang.String&gt;' available: expected at least 1
+                        bean which qualifies as autowire candidate. Dependency
+                        annotations: {@jakarta.inject.Inject(),
+                        @jakarta.faces.annotation.InitParameterMap()}
+                      </p>
+                    </blockquote>
+                    <p>
+                      Это уже от спринга. Spring создает бины и использует
+                      аннотации Jakarta для сканирования кандидатов в бины.
+                      <code>ClassPathScanningCandidateComponentProvider</code>
+                      имеет <code>includedFilters</code>, который в Spring Boot
+                      3 содержит по дефолту следующие аннотации:
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java">    <span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>stereotype<span class="token punctuation">.</span></span><span class="token class-name">Component</span></span><span class="token punctuation">;</span>
+    <span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">ManagedBean</span></span><span class="token punctuation">;</span>
+    <span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>inject<span class="token punctuation">.</span></span><span class="token class-name">Named</span></span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      Я поправлю этот конфликт, добавив
+                      <code>@ComponentScan</code> в конфигурацию приложения.
+                      Оставлю для спринга только <code>@Component</code>.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>context<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">ComponentScan</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>context<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">FilterType</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>stereotype<span class="token punctuation">.</span></span><span class="token class-name">Component</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@ComponentScan</span><span class="token punctuation">(</span>
+        useDefaultFilters <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        includeFilters <span class="token operator">=</span> <span class="token punctuation">{</span>
+            <span class="token annotation punctuation">@ComponentScan.Filter</span><span class="token punctuation">(</span>type <span class="token operator">=</span> <span class="token class-name">FilterType</span><span class="token punctuation">.</span><span class="token constant">ANNOTATION</span><span class="token punctuation">,</span> value <span class="token operator">=</span> <span class="token class-name">Component</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">)</span>
+<span class="token annotation punctuation">@SpringBootApplication</span>
+</code></pre>
+                    <h2>Использование Spring-бинов</h2>
+                    <p>
+                      Если вы используете Spring Boot, то скорее всего у вас
+                      есть спринговые бины. И скорее всего вы захотите их
+                      использовать для Faces. Давайте обратим
+                      <code>DemoRepository</code> в спринговый бин.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>stereotype<span class="token punctuation">.</span></span><span class="token class-name">Repository</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Repository</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoRepository</span> <span class="token punctuation">{</span>
+</code></pre>
+                    <p>
+                      Теперь у меня ошибка. CDI не имеет нужного бина для
+                      инъекции в конвертер.
+                    </p>
+                    <blockquote>
+                      <p>
+                        Caused by:
+                        org.jboss.weld.exceptions.DeploymentException:
+                        WELD-001408: Unsatisfied dependencies for type
+                        DemoRepository with qualifiers @Default<br />
+                        at injection point [BackedAnnotatedField] @Inject
+                        private
+                        com.example.demo.converter.BigDecimalConverter.demoRepository<br />
+                        at
+                        com.example.demo.converter.BigDecimalConverter.demoRepository(BigDecimalConverter.java:0)
+                      </p>
+                    </blockquote>
+                    <p>
+                      Я могу написать CDI-продьюсер для спрингового
+                      <code>ApplicationContext</code>. Заинжектить его. И
+                      запрашивать у него нужный бин в
+                      <code>@PostConstruct</code> методе.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>context<span class="token punctuation">.</span></span><span class="token class-name">ApplicationContext</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>web<span class="token punctuation">.</span>context<span class="token punctuation">.</span>support<span class="token punctuation">.</span></span><span class="token class-name">WebApplicationContextUtils</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>enterprise<span class="token punctuation">.</span>context<span class="token punctuation">.</span></span><span class="token class-name">Dependent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>enterprise<span class="token punctuation">.</span>inject<span class="token punctuation">.</span></span><span class="token class-name">Produces</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>servlet<span class="token punctuation">.</span></span><span class="token class-name">ServletContext</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Dependent</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SpringBeanProducer</span> <span class="token punctuation">{</span>
+
+	<span class="token annotation punctuation">@Produces</span>
+	<span class="token keyword">public</span> <span class="token class-name">ApplicationContext</span> <span class="token function">springContext</span><span class="token punctuation">(</span><span class="token class-name">ServletContext</span> sctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token class-name">ApplicationContext</span> ctx <span class="token operator">=</span> <span class="token class-name">WebApplicationContextUtils</span><span class="token punctuation">.</span><span class="token function">getRequiredWebApplicationContext</span><span class="token punctuation">(</span>sctx<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token keyword">return</span> ctx<span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>В конвертере:</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">PostConstruct</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">private</span> <span class="token class-name">DemoRepository</span> demoRepository<span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Inject</span>
+<span class="token keyword">private</span> <span class="token class-name">ApplicationContext</span> springContext<span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@PostConstruct</span>
+<span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>demoRepository <span class="token operator">=</span> springContext<span class="token punctuation">.</span><span class="token function">getBean</span><span class="token punctuation">(</span><span class="token class-name">DemoRepository</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> 
+</code></pre>
+                    <p>
+                      Могу ли я написать продьюсер сразу для бинов? Попробую
+                      сделать следующее.
+                    </p>
+                    <p>В конвертере добавлю аннотацию:</p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>example<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>config<span class="token punctuation">.</span></span><span class="token class-name">SpringBeanProducer</span><span class="token punctuation">.</span><span class="token class-name">SpringBean</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Inject</span>
+<span class="token annotation punctuation">@SpringBean</span>
+<span class="token annotation punctuation">@Qualifier</span><span class="token punctuation">(</span><span class="token string">"demoRepository"</span><span class="token punctuation">)</span>
+<span class="token keyword">private</span> <span class="token class-name">DemoRepository</span> demoRepository<span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      И новый продьюсер, который ищет бин по классу и имени:
+                    </p>
+                    <pre
+                      class="language-java has_file_name"
+                    ><span class="file_name">SpringBeanProducer.java</span><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>enterprise<span class="token punctuation">.</span>inject<span class="token punctuation">.</span>spi<span class="token punctuation">.</span></span><span class="token class-name">InjectionPoint</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>inject<span class="token punctuation">.</span></span><span class="token class-name">Qualifier</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Qualifier</span>
+<span class="token annotation punctuation">@Retention</span><span class="token punctuation">(</span><span class="token class-name">RetentionPolicy</span><span class="token punctuation">.</span><span class="token constant">RUNTIME</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token annotation punctuation">@interface</span> <span class="token class-name">SpringBean</span> <span class="token punctuation">{</span>
+<span class="token punctuation">}</span>
+
+<span class="token annotation punctuation">@Produces</span>
+<span class="token annotation punctuation">@SpringBean</span>
+<span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">create</span><span class="token punctuation">(</span><span class="token class-name">InjectionPoint</span> ip<span class="token punctuation">,</span> <span class="token class-name">ServletContext</span> sctx<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Class</span> beanClass <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Class</span><span class="token punctuation">)</span> ip<span class="token punctuation">.</span><span class="token function">getType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Annotation</span><span class="token punctuation">&gt;</span></span> qualifiers <span class="token operator">=</span> ip<span class="token punctuation">.</span><span class="token function">getAnnotated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getAnnotations</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">String</span> beanName <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">Annotation</span> a <span class="token operator">:</span> qualifiers<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>a <span class="token keyword">instanceof</span> <span class="token class-name"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>beans<span class="token punctuation">.</span>factory<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span>Qualifier</span> q<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            beanName <span class="token operator">=</span> q<span class="token punctuation">.</span><span class="token function">value</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token class-name">ApplicationContext</span> ctx <span class="token operator">=</span> <span class="token class-name">WebApplicationContextUtils</span><span class="token punctuation">.</span><span class="token function">getRequiredWebApplicationContext</span><span class="token punctuation">(</span>sctx<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>beanName <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>beanName<span class="token punctuation">.</span><span class="token function">isBlank</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> ctx<span class="token punctuation">.</span><span class="token function">getBean</span><span class="token punctuation">(</span>beanName<span class="token punctuation">,</span> beanClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+        
+    <span class="token keyword">return</span> ctx<span class="token punctuation">.</span><span class="token function">getBean</span><span class="token punctuation">(</span>beanClass<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Но это не работает. Потому что CDI не может сопоставить
+                      <code>DemoRepository.class</code> и
+                      <code>Object.class</code>. Он будет использовать
+                      продьюсер, только если он возвращает нужный класс.
+                      Аннотации <code>@SpringBean</code> мало. Это означает, что
+                      я должен писать свой продьюсер для каждого бина. Если их
+                      много, то это не решение. Или я должен инжектить бин в
+                      конвертер как Object. Удобнее написать сеттер для каждой
+                      инъекции, чем продьюсер для каждого бина.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>beans<span class="token punctuation">.</span>factory<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Qualifier</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">private</span> <span class="token class-name">DemoRepository</span> demoRepository<span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Inject</span>
+<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setDemoRepository</span><span class="token punctuation">(</span><span class="token annotation punctuation">@SpringBean</span> <span class="token annotation punctuation">@Qualifier</span><span class="token punctuation">(</span><span class="token string">"demoRepository"</span><span class="token punctuation">)</span> <span class="token class-name">Object</span> repository<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>demoRepository <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">DemoRepository</span><span class="token punctuation">)</span> repository<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>Теперь я могу использовать Spring в CDI.</p>
+                    <p>
+                      Можно ли вставлять зависимости из CDI в Spring? Я могу
+                      делать это в <code>@PostConstruct</code> следующим
+                      способом:
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>enterprise<span class="token punctuation">.</span>inject<span class="token punctuation">.</span>spi<span class="token punctuation">.</span></span><span class="token class-name">CDI</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>enterprise<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">TypeLiteral</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">InitParameterMap</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">private</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">&gt;</span></span> initParam<span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@PostConstruct</span>
+<span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>initParam <span class="token operator">=</span> <span class="token constant">CDI</span><span class="token punctuation">.</span><span class="token function">current</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">select</span><span class="token punctuation">(</span>
+            <span class="token keyword">new</span> <span class="token class-name">TypeLiteral</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Map</span><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token punctuation">&gt;</span><span class="token punctuation">&gt;</span></span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token keyword">new</span> <span class="token class-name">InitParameterMap<span class="token punctuation">.</span>Literal</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Последний шаг - это использовать Spring-бины прямо в
+                      xhtml. Для этого нужен ELResolver. Spring уже имеет такой.
+                      Остается зарегистрировать его в
+                      <code>faces-config.xml</code>.
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>application</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>el-resolver</span><span class="token punctuation">&gt;</span></span>org.springframework.web.jsf.el.SpringBeanFacesELResolver<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>el-resolver</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>application</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <h2>Сборка JAR</h2>
+                    <p>
+                      Конфигурация выглядит рабочей. Можно собирать и проверять.
+                    </p>
+                    <pre
+                      class="language-bash"
+                    ><code class="language-bash">mvn package
+</code></pre>
+                    <p>
+                      В результате собранный jar не работает. Потому что Spring
+                      Boot делает особенный fat jar с зависимостями внутри и
+                      делает свой ClassLoader для загрузки всего этого.
+                    </p>
+                    <p>Я могу поменять это</p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>plugin</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>spring-boot-maven-plugin<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>plugin</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>на это</p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>plugin</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.apache.maven.plugins<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>maven-dependency-plugin<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>executions</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>execution</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>id</span><span class="token punctuation">&gt;</span></span>copy-dependencies<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>id</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>phase</span><span class="token punctuation">&gt;</span></span>prepare-package<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>phase</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>goals</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>goal</span><span class="token punctuation">&gt;</span></span>copy-dependencies<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>goal</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>goals</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>configuration</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>outputDirectory</span><span class="token punctuation">&gt;</span></span>
+                    ${project.build.directory}/libs
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>outputDirectory</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>configuration</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>execution</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>executions</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>plugin</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>plugin</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.apache.maven.plugins<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>maven-jar-plugin<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>configuration</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>archive</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>manifest</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>addClasspath</span><span class="token punctuation">&gt;</span></span>true<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>addClasspath</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>classpathPrefix</span><span class="token punctuation">&gt;</span></span>libs/<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>classpathPrefix</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>mainClass</span><span class="token punctuation">&gt;</span></span>
+                    com.example.demo.DemoApplication
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>mainClass</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>manifest</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>archive</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>configuration</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>plugin</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      По-моему это лучший вариант. Спринговая сборка мудреная и
+                      является ещё одной точкой отказа. Не все библиотеки могут
+                      работать с такой структурой архива.
+                    </p>
+                    <p>
+                      Если вы хотите сохранить упаковку от Spring Boot, то вы
+                      должны решить две проблемы.
+                    </p>
+                    <h3>1. CDI</h3>
+                    <p>
+                      CDI searches beans by crawling the jar file tree. And a
+                      class name is builded by path. So the class name will be
+                      <code
+                        >BOOT-INF.classes.com.example.demo.converter.BigDecimalConverter</code
+                      >
+                    </p>
+                    <p>
+                      You should write your discovery strategy. I use
+                      <code>jandex</code>.
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.jboss<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>jandex<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>3.1.1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      And I can add to that strategy my custom
+                      <code>BeanArchiveHandler</code>. I should register it as
+                      service
+                    </p>
+                    <pre
+                      class="language-text has_file_name"
+                    ><span class="file_name">META-INF/services/org.jboss.weld.environment.deployment.discovery.BeanArchiveHandler</span><code class="language-text">com.example.demo.config.SpringBootFileSystemBeanArchiveHandler
+</code></pre>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>jboss<span class="token punctuation">.</span>weld<span class="token punctuation">.</span>environment<span class="token punctuation">.</span>deployment<span class="token punctuation">.</span>discovery<span class="token punctuation">.</span></span><span class="token class-name">BeanArchiveBuilder</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>jboss<span class="token punctuation">.</span>weld<span class="token punctuation">.</span>environment<span class="token punctuation">.</span>deployment<span class="token punctuation">.</span>discovery<span class="token punctuation">.</span>jandex<span class="token punctuation">.</span></span><span class="token class-name">JandexFileSystemBeanArchiveHandler</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">jakarta<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Priority</span></span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Priority</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SpringBootFileSystemBeanArchiveHandler</span> <span class="token keyword">extends</span> <span class="token class-name">JandexFileSystemBeanArchiveHandler</span> <span class="token punctuation">{</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">String</span> <span class="token constant">BOOT_INF_CLASSES</span> <span class="token operator">=</span> <span class="token string">"BOOT-INF/classes/"</span><span class="token punctuation">;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">BeanArchiveBuilder</span> <span class="token function">handle</span><span class="token punctuation">(</span><span class="token class-name">String</span> path<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// use only for spring boot build</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>path<span class="token punctuation">.</span><span class="token function">toLowerCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">endsWith</span><span class="token punctuation">(</span><span class="token string">".jar"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// try other handlers</span>
+            <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">handle</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">add</span><span class="token punctuation">(</span><span class="token class-name">Entry</span> entry<span class="token punctuation">,</span> <span class="token class-name">BeanArchiveBuilder</span> builder<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">MalformedURLException</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>entry<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">startsWith</span><span class="token punctuation">(</span><span class="token constant">BOOT_INF_CLASSES</span><span class="token punctuation">)</span>
+                <span class="token operator">||</span> <span class="token operator">!</span>entry<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">endsWith</span><span class="token punctuation">(</span><span class="token constant">CLASS_FILE_EXTENSION</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// skip spring classes for loader and other resources </span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        entry <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SpringBootEntry</span><span class="token punctuation">(</span>entry<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>entry<span class="token punctuation">,</span> builder<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">protected</span> <span class="token keyword">class</span> <span class="token class-name">SpringBootEntry</span> <span class="token keyword">implements</span> <span class="token class-name">Entry</span> <span class="token punctuation">{</span>
+
+        <span class="token keyword">private</span> <span class="token class-name">Entry</span> delegate<span class="token punctuation">;</span>
+        
+        <span class="token keyword">public</span> <span class="token class-name">SpringBootEntry</span><span class="token punctuation">(</span><span class="token class-name">Entry</span> entry<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span>delegate <span class="token operator">=</span> entry<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">String</span> name <span class="token operator">=</span> delegate<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment">// cut off prefix from class name</span>
+            name <span class="token operator">=</span> name<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token constant">BOOT_INF_CLASSES</span><span class="token punctuation">.</span><span class="token function">length</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> name<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token class-name">URL</span> <span class="token function">getUrl</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">MalformedURLException</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> delegate<span class="token punctuation">.</span><span class="token function">getUrl</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      <code>@Priority(100)</code> is important. Hight value
+                      means that my handler will be sorted and used in the first
+                      place.
+                    </p>
+                    <h3>2. Tomcat static resources</h3>
+                    <p>
+                      Tomcat creates static resources from jars. Tomcat asks all
+                      urls from URLClassLoader and searches
+                      <code>/META-INF/resources</code> in that locations. Spring
+                      Boot moves <code>/src/main/resources</code> to root of
+                      jar. But does not add the root to ClassLoader. Why does
+                      spring not package resources to
+                      <code>/BOOT-INF/classes</code>? There is
+                      <a
+                        href="https://github.com/spring-projects/spring-boot/issues/8299"
+                        >issue</a
+                      >. When they talk about jar, they forget that it is
+                      executable. On their opinion, jar is a dependency for
+                      another war project.
+                    </p>
+                    <p>
+                      I wrote my
+                      <code>ConfigurableTomcatWebServerFactory</code> with a
+                      listener. The listener adds my resources to Tomcat.
+                    </p>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token annotation punctuation">@Bean</span>
+<span class="token keyword">public</span> <span class="token class-name">TomcatServletWebServerFactory</span> <span class="token function">tomcatFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">TomcatFactory</span> factory <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TomcatFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> factory<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <pre
+                      class="language-java"
+                    ><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>catalina<span class="token punctuation">.</span></span><span class="token class-name">Context</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>catalina<span class="token punctuation">.</span></span><span class="token class-name">Lifecycle</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>catalina<span class="token punctuation">.</span></span><span class="token class-name">LifecycleEvent</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>catalina<span class="token punctuation">.</span></span><span class="token class-name">LifecycleListener</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>catalina<span class="token punctuation">.</span></span><span class="token class-name">WebResourceRoot</span><span class="token punctuation">.</span><span class="token class-name">ResourceSetType</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>boot<span class="token punctuation">.</span>web<span class="token punctuation">.</span>embedded<span class="token punctuation">.</span>tomcat<span class="token punctuation">.</span></span><span class="token class-name">TomcatServletWebServerFactory</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TomcatFactory</span> <span class="token keyword">extends</span> <span class="token class-name">TomcatServletWebServerFactory</span> <span class="token punctuation">{</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">postProcessContext</span><span class="token punctuation">(</span><span class="token class-name">Context</span> context<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        context<span class="token punctuation">.</span><span class="token function">addLifecycleListener</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">WebResourcesConfigurer</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">WebResourcesConfigurer</span> <span class="token keyword">implements</span> <span class="token class-name">LifecycleListener</span> <span class="token punctuation">{</span>
+        
+        <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">String</span> <span class="token constant">META_INF_RESOURCES</span> <span class="token operator">=</span> <span class="token string">"META-INF/resources"</span><span class="token punctuation">;</span>
+        <span class="token keyword">private</span> <span class="token class-name">Context</span> context<span class="token punctuation">;</span>
+
+        <span class="token keyword">public</span> <span class="token class-name">WebResourcesConfigurer</span><span class="token punctuation">(</span><span class="token class-name">Context</span> context<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span>context <span class="token operator">=</span> context<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">lifecycleEvent</span><span class="token punctuation">(</span><span class="token class-name">LifecycleEvent</span> event<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>event<span class="token punctuation">.</span><span class="token function">getType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span><span class="token class-name">Lifecycle</span><span class="token punctuation">.</span><span class="token constant">CONFIGURE_START_EVENT</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token class-name">ClassLoader</span> classLoader <span class="token operator">=</span> <span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token punctuation">(</span>classLoader <span class="token keyword">instanceof</span> <span class="token class-name">URLClassLoader</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">return</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                <span class="token class-name">URL</span> jarRoot <span class="token operator">=</span> classLoader<span class="token punctuation">.</span><span class="token function">getResource</span><span class="token punctuation">(</span><span class="token constant">META_INF_RESOURCES</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>jarRoot <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span><span class="token string">"Web resources not found"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">return</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+
+                <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">int</span> innerRootIndex <span class="token operator">=</span> jarRoot<span class="token punctuation">.</span><span class="token function">getPath</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">indexOf</span><span class="token punctuation">(</span><span class="token string">"!/"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token class-name">String</span> path <span class="token operator">=</span> jarRoot<span class="token punctuation">.</span><span class="token function">getPath</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> innerRootIndex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    jarRoot <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">URL</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    logger<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span><span class="token string">"Web resources URL error"</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">return</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                context<span class="token punctuation">.</span><span class="token function">getResources</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">createWebResourceSet</span><span class="token punctuation">(</span><span class="token class-name">ResourceSetType</span><span class="token punctuation">.</span><span class="token constant">RESOURCE_JAR</span><span class="token punctuation">,</span>
+                        <span class="token string">"/"</span><span class="token punctuation">,</span> jarRoot<span class="token punctuation">,</span> <span class="token string">"/"</span> <span class="token operator">+</span> <span class="token constant">META_INF_RESOURCES</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                logger<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"Web resources were added to Tomcat"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <h2>Mojarra</h2>
+                    <p>
+                      Above I experimented with Apache MyFaces. If you want to
+                      use Eclipse Mojarra, change the dependencies.
+                    </p>
+                    <pre
+                      class="language-xml"
+                    ><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.glassfish<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>jakarta.faces<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>4.0.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">&gt;</span></span> <span class="token comment">&lt;!-- Optional, only when &lt;f:websocket&gt; is used. --&gt;</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">&gt;</span></span>org.glassfish<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">&gt;</span></span>jakarta.json<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">&gt;</span></span>2.0.0<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>Change ServletContainerInitializer</p>
+                    <pre
+                      class="language-java has_file_name"
+                    ><span class="file_name">JsfInitializer.java</span><code class="language-java"><span class="token keyword">import</span> <span class="token import"><span class="token namespace">com<span class="token punctuation">.</span>sun<span class="token punctuation">.</span>faces<span class="token punctuation">.</span>config<span class="token punctuation">.</span></span><span class="token class-name">FacesInitializer</span></span><span class="token punctuation">;</span>
+
+<span class="token class-name">ServletContainerInitializer</span> facesInitializer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FacesInitializer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+facesInitializer<span class="token punctuation">.</span><span class="token function">onStartup</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <h2>Conclusion</h2>
+                    <p>
+                      It is as easy to run Faces with Spring Boot as to run
+                      initializers for embedded servlet container. But the
+                      packaging makes things worse.
+                    </p>
+                    <p>
+                      The WAR package requires no additional configuration. Just
+                      two initializers. And it works like Tomcat. The problem is
+                      to run it from a IDE. Running the main class
+                      DemoApplication from the IDE is not the same as running
+                      <code>java -jar demo.war</code>. DX is bad.
+                    </p>
+                    <p>
+                      So I prefer to build JAR and to package it with
+                      dependencies outside. When I run the project from the IDE,
+                      I can change xhtml, java and changes are visible after
+                      page reload.
+                    </p>
+                    <h2>Links</h2>
+                    <ol>
+                      <li>
+                        <a
+                          href="https://jakarta.ee/specifications/faces/4.0/jakarta-faces-4.0.html"
+                          >Faces specification</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="https://jakarta.ee/specifications/cdi/4.0/jakarta-cdi-spec-4.0.html"
+                          >CDI specification</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="https://jakarta.ee/specifications/servlet/6.0/jakarta-servlet-spec-6.0.html"
+                          >Servlet specification</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#web"
+                          >Spring Boot</a
+                        >
+                      </li>
+                      <li>
+                        <a href="https://github.com/eclipse-ee4j/mojarra"
+                          >Mojarra</a
+                        >
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+              <!---->
+            </div>
+          </div>
+        </section>
+        <footer id="page-footer">
+          <div class="line">
+            <a class="footer_logo" href="//www.qwertovsky.com"
+              ><img src="/blog/assets/largeqwerto-12cd7be1.svg"
+            /></a>
+            <div class="copyright">Qwertovsky</div>
+            <div class="spacer"></div>
+            <div class="links">
+              <a class="twitter" href="https://twitter.com/qwertovsky"
+                ><svg
+                  aria-hidden="true"
+                  focusable="false"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  class=""
+                >
+                  <path
+                    d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
+                    class=""
+                  ></path></svg></a
+              ><a class="mail" href="mailto:valery@qwertovsky.com"
+                ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path
+                    d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"
+                  ></path></svg
+              ></a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

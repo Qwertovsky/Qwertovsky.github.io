@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/blog/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update blog to Nuxt 3 | Qwertoblog</title>
+
+    <link rel="stylesheet" href="/blog/assets/index-dbbc22e1.css" />
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true">
+      <div id="appWrap">
+        <div id="pageHeader">
+          <a href="/blog/" class="qm_brand">QwertoBlog</a>
+          <div></div>
+          <a href="/blog/tag" class="qm_nav_link tags_link" tabindex="0">Tags</a
+          ><a class="qm_nav_link site_link" tabindex="0" href="//qwertovsky.com"
+            >Site</a
+          >
+        </div>
+        <section id="centerPart">
+          <div class="post">
+            <div class="post_title"><span>Update blog to Nuxt 3</span></div>
+            <div class="post_meta">
+              2023-01-15
+              <span
+                ><!--[--><span> | <a href="/blog/tag/js" class="">js</a></span
+                ><span>
+                  | <a href="/blog/tag/frontend" class="">frontend</a></span
+                ><span> | <a href="/blog/tag/vue.js" class="">vue.js</a></span
+                ><span> | <a href="/blog/tag/blog" class="">blog</a></span
+                ><!--]--></span
+              >
+            </div>
+            <div class="post_content">
+              <div>
+                <div>
+                  <div>
+                    <p>
+                      Nuxt.js have been updated to Vue 3. Hence I decided to try
+                      it for my blog. Nuxt has module
+                      <a href="https://content.nuxtjs.org">@nuxt/content</a> to
+                      load markdown files. Let's see how it is modifiable for my
+                      purpose.
+                    </p>
+                    <!-- more -->
+                    <p>Create new project.</p>
+                    <pre
+                      class="language-"
+                    ><code class="language-">npx nuxi init nuxt-blog
+npm install --save-dev @nuxt/content
+npm install --save-dev sass
+</code></pre>
+                    <p>Add module and styles.</p>
+                    <pre
+                      class="language-js has_file_name"
+                    ><span class="file_name">./nuxt.config.ts</span><code class="language-js"><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">defineNuxtConfig</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token literal-property property">app</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token literal-property property">baseURL</span><span class="token operator">:</span> <span class="token string">"/blog"</span><span class="token punctuation">,</span>
+        <span class="token literal-property property">rootId</span><span class="token operator">:</span> <span class="token string">"app"</span><span class="token punctuation">,</span> <span class="token comment">//html root div id</span>
+        <span class="token literal-property property">head</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token literal-property property">link</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+                <span class="token punctuation">{</span>
+                    <span class="token literal-property property">rel</span><span class="token operator">:</span> <span class="token string">"icon"</span><span class="token punctuation">,</span>
+                    <span class="token literal-property property">href</span><span class="token operator">:</span> <span class="token string">"/blog/favicon.svg"</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token literal-property property">title</span><span class="token operator">:</span> <span class="token string">'Qwertoblog'</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">modules</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">'@nuxt/content'</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">css</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">'@/assets/style.scss'</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">content</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre>
+                    <p>Place articales to <code>/content</code> directory.</p>
+                    <p>Create default layout</p>
+                    <pre
+                      class="language-html has_file_name"
+                    ><span class="file_name">./layouts/default.vue</span><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>appWrap<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>TheHeader</span> <span class="token punctuation">/&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>section</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>centerPart<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>slot</span> <span class="token punctuation">/&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>section</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>TheFooter</span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <h3>Create pages.</h3>
+                    <p>Main list of posts</p>
+                    <pre
+                      class="language-html has_file_name"
+                    ><span class="file_name">./pages/index.vue</span><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>PostsList</span> <span class="token punctuation">/&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>The page for each post</p>
+                    <pre
+                      class="language-html has_file_name"
+                    ><span class="file_name">./pages/posts/[slug].vue</span><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Post</span> <span class="token attr-name">v-if</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post<span class="token punctuation">"</span></span> <span class="token attr-name">:post-data</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post<span class="token punctuation">"</span></span> <span class="token attr-name">:more</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>true<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">setup</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ts<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">import</span> <span class="token punctuation">{</span> useRoute <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'vue-router'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> useHead <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@vueuse/head'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> route <span class="token operator">=</span> <span class="token function">useRoute</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> slug <span class="token operator">=</span> <span class="token operator">&lt;</span>string<span class="token operator">&gt;</span>route<span class="token punctuation">.</span>params<span class="token punctuation">[</span><span class="token string">"slug"</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token punctuation">{</span> <span class="token literal-property property">data</span><span class="token operator">:</span> post <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">useAsyncData</span><span class="token punctuation">(</span><span class="token string">'posts-list'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token function">queryContent</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">where</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token literal-property property">slug</span><span class="token operator">:</span> slug<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">findOne</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token function">useHead</span><span class="token punctuation">(</span><span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">title</span><span class="token operator">:</span> post<span class="token punctuation">.</span>value<span class="token operator">!</span><span class="token punctuation">.</span>title <span class="token operator">+</span> <span class="token string">" | Qwertoblog"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>Pagination</p>
+                    <pre
+                      class="language-html has_file_name"
+                    ><span class="file_name">./pages/page/[page].vue</span><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>PostsList</span> <span class="token attr-name">:index</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>index<span class="token punctuation">"</span></span><span class="token punctuation">/&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">setup</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ts<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">const</span> route <span class="token operator">=</span> <span class="token function">useRoute</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> index <span class="token operator">=</span> <span class="token function">Number</span><span class="token punctuation">(</span>route<span class="token punctuation">.</span>params<span class="token punctuation">[</span><span class="token string">"page"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>Tags pages look similar.</p>
+                    <pre class="language-"><code class="language-">pages
+└─tag
+  ├─[tag]
+  │ └─[page].vue
+  ├─[tag_name].vue
+  └─index.vue
+</code></pre>
+                    <p>
+                      Placeholders <code>tag</code> and
+                      <code>tag_name</code> are different because same are
+                      treated as nested routes.
+                    </p>
+                    <h3>Components</h3>
+                    <p>
+                      Components are in <code>./components</code> directory.
+                      Components that are used in markdown files should be
+                      global. And they are in <code>./components/global</code>.
+                    </p>
+                    <pre
+                      class="language-html has_file_name"
+                    ><span class="file_name">./components/PostsList.vue</span><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>posts<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post_wrap<span class="token punctuation">"</span></span>
+    <span class="token attr-name">v-for</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post in posts<span class="token punctuation">"</span></span> <span class="token attr-name">:key</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post.slug<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Post</span> <span class="token attr-name">:post-data</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post<span class="token punctuation">"</span></span> <span class="token attr-name">:more</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>false<span class="token punctuation">"</span></span>
+       <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pagination<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pagination_older<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>NuxtLink</span> <span class="token attr-name">v-if</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>hasPrev<span class="token punctuation">"</span></span> <span class="token attr-name">:to</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>prevUrl<span class="token punctuation">"</span></span> <span class="token attr-name">title</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>Old<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>« Old<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>NuxtLink</span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pagination_home<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>pagination_newer<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>NuxtLink</span> <span class="token attr-name">v-if</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>hasNext<span class="token punctuation">"</span></span> <span class="token attr-name">:to</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>nextUrl<span class="token punctuation">"</span></span> <span class="token attr-name">title</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>New<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>New »<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>NuxtLink</span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">setup</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ts<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">import</span> <span class="token punctuation">{</span> computed <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'vue'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> useHead <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@vueuse/head'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> ParsedContent <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"~~/../../nuxt_content/src/runtime/types"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> config <span class="token operator">=</span> <span class="token function">useRuntimeConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">const</span> <span class="token constant">POSTS_PER_PAGE</span><span class="token operator">:</span> number <span class="token operator">=</span> config<span class="token punctuation">.</span>public<span class="token punctuation">.</span>postsPerPage<span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> props <span class="token operator">=</span> <span class="token function">defineProps</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token literal-property property">index</span><span class="token operator">:</span> Number<span class="token punctuation">,</span>
+  <span class="token literal-property property">tag</span><span class="token operator">:</span> String
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> <span class="token punctuation">{</span> <span class="token literal-property property">data</span><span class="token operator">:</span> allPosts <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">useAsyncData</span><span class="token punctuation">(</span><span class="token string">'posts-list'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token function">queryContent</span><span class="token punctuation">(</span><span class="token string">'/'</span><span class="token punctuation">)</span>
+<span class="token punctuation">.</span><span class="token function">find</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token function">useHead</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token literal-property property">title</span><span class="token operator">:</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> title <span class="token operator">=</span> <span class="token string">"Qwertoblog"</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>props<span class="token punctuation">.</span>index<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      title <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Page </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>props<span class="token punctuation">.</span>index<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> | </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>title<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>props<span class="token punctuation">.</span>tag<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      title <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Tag </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>props<span class="token punctuation">.</span>tag<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string"> | </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>title<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> title<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  
+<span class="token keyword">const</span> hasPrev <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token operator">!</span><span class="token punctuation">(</span>maxIndex<span class="token punctuation">.</span>value <span class="token operator">==</span> <span class="token number">1</span> <span class="token operator">||</span> index<span class="token punctuation">.</span>value <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> hasNext <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token operator">!</span><span class="token operator">!</span>index<span class="token punctuation">.</span>value <span class="token operator">&amp;&amp;</span> index<span class="token punctuation">.</span>value <span class="token operator">!=</span> maxIndex<span class="token punctuation">.</span>value<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> prevUrl <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> url <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">;</span>
+  
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>hasPrev<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token string">''</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>tag<span class="token punctuation">.</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    url <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">/tag/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>tag<span class="token punctuation">.</span>value<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">/page/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>index<span class="token punctuation">.</span>value <span class="token operator">-</span> <span class="token number">1</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    url <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">/page/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>index<span class="token punctuation">.</span>value <span class="token operator">-</span> <span class="token number">1</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> url<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> nextUrl <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> url <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>hasNext<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token string">''</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>index<span class="token punctuation">.</span>value <span class="token operator">==</span> maxIndex<span class="token punctuation">.</span>value <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tag<span class="token punctuation">.</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      url <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">/tag/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>tag<span class="token punctuation">.</span>value<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      url <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">/</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> 
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tag<span class="token punctuation">.</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      url <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">/tag/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>tag<span class="token punctuation">.</span>value<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">/page/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>index<span class="token punctuation">.</span>value <span class="token operator">+</span> <span class="token number">1</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      url <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">/page/</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>index<span class="token punctuation">.</span>value <span class="token operator">+</span> <span class="token number">1</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> url<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> postsByTag <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> posts <span class="token operator">=</span> allPosts<span class="token operator">!</span><span class="token punctuation">.</span>value<span class="token operator">!</span>
+  <span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token literal-property property">post</span><span class="token operator">:</span> ParsedContent</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> post<span class="token punctuation">.</span>draft <span class="token operator">!=</span> <span class="token boolean">true</span><span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token literal-property property">post</span><span class="token operator">:</span> ParsedContent</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> 
+    <span class="token punctuation">(</span>tag<span class="token punctuation">.</span>value <span class="token operator">==</span> <span class="token keyword">null</span>
+      <span class="token operator">||</span> post<span class="token operator">!</span><span class="token punctuation">.</span>tags
+        <span class="token operator">&amp;&amp;</span> post<span class="token punctuation">.</span>tags<span class="token punctuation">.</span><span class="token function">some</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token literal-property property">t</span><span class="token operator">:</span> string</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> t<span class="token punctuation">.</span><span class="token function">toLowerCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> tag<span class="token punctuation">.</span>value<span class="token operator">!</span><span class="token punctuation">.</span><span class="token function">toLowerCase</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">)</span>
+  <span class="token punctuation">.</span><span class="token function">sort</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token literal-property property">a</span><span class="token operator">:</span> ParsedContent<span class="token punctuation">,</span> <span class="token literal-property property">b</span><span class="token operator">:</span> ParsedContent</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span>b<span class="token punctuation">.</span>date<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>date<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> posts<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> tag <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> props<span class="token punctuation">.</span>tag<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> index <span class="token operator">=</span> computed<span class="token operator">&lt;</span>number<span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> index <span class="token operator">=</span> props<span class="token punctuation">.</span>index<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>index<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    index <span class="token operator">=</span> maxIndex<span class="token punctuation">.</span>value<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> index<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> maxIndex <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> Math<span class="token punctuation">.</span><span class="token function">ceil</span><span class="token punctuation">(</span>postsByTag<span class="token punctuation">.</span>value<span class="token punctuation">.</span>length <span class="token operator">/</span> <span class="token constant">POSTS_PER_PAGE</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> posts <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> posts <span class="token operator">=</span> postsByTag<span class="token punctuation">.</span>value<span class="token punctuation">;</span>
+  <span class="token keyword">let</span> indexCur <span class="token operator">=</span> index<span class="token punctuation">.</span>value<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>indexCur<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    indexCur <span class="token operator">=</span> maxIndex<span class="token punctuation">.</span>value<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  
+  posts <span class="token operator">=</span> posts<span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span>
+    Math<span class="token punctuation">.</span><span class="token function">max</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> posts<span class="token punctuation">.</span>length <span class="token operator">-</span> indexCur <span class="token operator">*</span> <span class="token constant">POSTS_PER_PAGE</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    posts<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token punctuation">(</span>indexCur <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token constant">POSTS_PER_PAGE</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> posts<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <pre
+                      class="language-html has_file_name"
+                    ><span class="file_name">./components/Post.vue</span><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post_title<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>LinkToPost</span> <span class="token attr-name">:text</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>title<span class="token punctuation">"</span></span> <span class="token attr-name">:outbound</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>outbound<span class="token punctuation">"</span></span> <span class="token attr-name">:url</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>postUrl<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post_meta<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+      {{postDate}}
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>MetaTags</span> <span class="token attr-name">:tags</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>fm.tags<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post_content<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+      
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ContentRenderer</span> <span class="token attr-name">:value</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>post<span class="token punctuation">"</span></span> <span class="token attr-name">:excerpt</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>!more<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span> <span class="token attr-name">#empty</span><span class="token punctuation">&gt;</span></span>
+          Rendering..
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ContentRenderer</span><span class="token punctuation">&gt;</span></span>
+
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>LinkToPost</span> <span class="token attr-name">v-if</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>readMore<span class="token punctuation">"</span></span>
+        <span class="token attr-name">text</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>read more<span class="token punctuation">"</span></span> <span class="token attr-name">:outbound</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>outbound<span class="token punctuation">"</span></span> <span class="token attr-name">:url</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>postUrl<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">setup</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ts<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">import</span> <span class="token punctuation">{</span> computed <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"vue"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> type <span class="token punctuation">{</span> PropType <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"vue"</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> ParsedContent <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'~~/../../nuxt_content/src/runtime/types'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> props <span class="token operator">=</span> <span class="token function">defineProps</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token literal-property property">postData</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">type</span><span class="token operator">:</span> Object <span class="token keyword">as</span> PropType<span class="token operator">&lt;</span>ParsedContent<span class="token operator">&gt;</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">required</span><span class="token operator">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token literal-property property">more</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">type</span><span class="token operator">:</span> Boolean<span class="token punctuation">,</span>
+    <span class="token keyword">default</span><span class="token operator">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> <span class="token literal-property property">post</span><span class="token operator">:</span> ParsedContent <span class="token operator">=</span> props<span class="token punctuation">.</span>postData<span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> title <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> fm<span class="token punctuation">.</span>value <span class="token operator">&amp;&amp;</span> fm<span class="token punctuation">.</span>value<span class="token punctuation">.</span>title<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> postDate <span class="token operator">=</span> computed<span class="token operator">&lt;</span>string<span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token literal-property property">d</span><span class="token operator">:</span> string <span class="token operator">=</span> fm<span class="token punctuation">.</span>value<span class="token punctuation">.</span>date<span class="token punctuation">;</span>
+  <span class="token keyword">return</span> d<span class="token operator">?.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> fm <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> post <span class="token operator">||</span> <span class="token operator">&lt;</span>ParsedContent<span class="token operator">&gt;</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> postUrl <span class="token operator">=</span> computed<span class="token operator">&lt;</span>string <span class="token operator">|</span> <span class="token keyword">undefined</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>fm<span class="token punctuation">.</span>value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">let</span> <span class="token literal-property property">postUrl</span><span class="token operator">:</span> string <span class="token operator">|</span> <span class="token keyword">undefined</span> <span class="token operator">=</span> <span class="token string">"/posts/"</span> <span class="token operator">+</span> fm<span class="token punctuation">.</span>value<span class="token punctuation">.</span>slug<span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>fm<span class="token punctuation">.</span>value<span class="token punctuation">.</span>url<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    postUrl <span class="token operator">=</span> fm<span class="token punctuation">.</span>value<span class="token punctuation">.</span>url<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> postUrl<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> outbound <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> fm<span class="token punctuation">.</span>value <span class="token operator">&amp;&amp;</span> fm<span class="token punctuation">.</span>value<span class="token punctuation">.</span>url <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">const</span> readMore <span class="token operator">=</span> <span class="token function">computed</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>props<span class="token punctuation">.</span>more<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// show full post</span>
+      <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> outbound<span class="token punctuation">.</span>value <span class="token operator">||</span> <span class="token punctuation">(</span>post <span class="token operator">&amp;&amp;</span> post<span class="token punctuation">.</span>excerpt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>
+                      I use document property <code>slug</code>. Nuxt Content
+                      does not create this property. I create it after
+                      processing. Nuxt Content creates <code>_id</code> from
+                      file name and it is different. Not wthat I need. Links to
+                      my posts could be broken. So I should write code to format
+                      slug from file name. I use Nitro plugin for this. Plugins
+                      from directory <code>./server/plugins</code> are
+                      autoregistered as Nitro plugins.
+                    </p>
+                    <pre
+                      class="language-ts has_file_name"
+                    ><span class="file_name">./server/plugins/nitro.ts</span><code class="language-ts"><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">defineNitroPlugin</span><span class="token punctuation">(</span><span class="token punctuation">(</span>nitroApp<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    nitroApp<span class="token punctuation">.</span>hooks<span class="token punctuation">.</span><span class="token function">hook</span><span class="token punctuation">(</span><span class="token string">'content:file:afterParse'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>file<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>file<span class="token punctuation">.</span>_id<span class="token punctuation">.</span><span class="token function">endsWith</span><span class="token punctuation">(</span><span class="token string">'.md'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            file<span class="token punctuation">.</span>slug <span class="token operator">=</span> file<span class="token punctuation">.</span>_file<span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">\.</span><span class="token regex-delimiter">/</span><span class="token regex-flags">g</span></span><span class="token punctuation">,</span> <span class="token string">'_'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>Now it could work. But there are still problems.</p>
+                    <h1>Problems</h1>
+                    <h2>Images and other assets</h2>
+                    <p>
+                      I can't access files from post that are in directory next
+                      to post. Files should be moved to <code>./public</code>.
+                      So after build images are not processed and they don't
+                      have hash in filenames. Unused files and other materials
+                      not for public go to distributive too. So I have to use 3
+                      locations for one post.
+                    </p>
+                    <h2>Vue component in markdown</h2>
+                    <p>
+                      Component have to be with closing tag.
+                      <code>&lt;MyComponent /&gt;</code> doen't work. I have to
+                      fix in all posts to
+                      <code>&lt;MyComponent&gt;&lt;/MyComponent&gt;</code>.
+                    </p>
+                    <h2>Assets are in _nuxt directory</h2>
+                    <p>
+                      There is config property <code>app.buildAssetsDir</code>.
+                      I changed default value to <code>/assets</code>.
+                    </p>
+                    <h2>Excerpt and description</h2>
+                    <p>
+                      I use property <code>description</code> in frontmatter if
+                      I don't use excerpt. Excerpt is creted from document with
+                      tag <code>&lt;!-- more --&gt;</code>. If I don't write
+                      description and <code>&lt;!-- more --&gt;</code> it means
+                      my post is short and I use full content as description and
+                      I don't show link "Read more".
+                    </p>
+                    <p>
+                      Nuxt Content always generates the description property and
+                      the excerpt. If there is no
+                      <code>&lt;!-- more --&gt;</code> the excerpt equals whole
+                      document. So I can't understand in my Post.vue is this
+                      post small or is there something to read more.
+                    </p>
+                    <p>
+                      I have to rename property <code>description</code> in all
+                      posts. And add new property <code>no_excerpt_here</code>.
+                      See https://github.com/nuxt/content/pull/1801
+                    </p>
+                    <h2>Fenced code block info</h2>
+                    <p>
+                      Fenced code block in markdown can contain language and
+                      other info
+                    </p>
+                    <pre
+                      class="language-markdown"
+                    ><code class="language-markdown"><span class="token code"><span class="token punctuation">```</span><span class="token code-language">java and other info</span>
+<span class="token code-block language-java language-java language-java"><span class="token comment">// code to see</span></span>
+<span class="token punctuation">```</span></span>
+</code></pre>
+                    <p>
+                      Nuxt Content takes this line and expects that it looks
+                      like <code>java [./filename.java] {1-3,5}</code>. Module
+                      takes language, filename, and the code lines numbers to
+                      highlight. Other information will be droped and forgeted.
+                      See https://github.com/nuxt/content/pull/1800
+                    </p>
+                    <p>
+                      It happens in <code>remark-rehype</code> plugin after
+                      default remark plugins and other added remark plugins. So
+                      I can write my remark plugin to parse
+                      <code>meta</code> property from tag <code>code</code> and
+                      save it to another property. And there is another problem.
+                    </p>
+                    <h2>Remark and rehype plugins</h2>
+                    <p>Can't write just function as plugin</p>
+                    <pre
+                      class="language-js"
+                    ><code class="language-js"><span class="token keyword">import</span> myRemarkPlugin <span class="token keyword">from</span> <span class="token string">'./my-remark-plugin'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">defineNuxtConfig</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token literal-property property">content</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token literal-property property">markdown</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token literal-property property">remarkPlugins</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token string-property property">"my-remark-plugin"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                    <span class="token literal-property property">instance</span><span class="token operator">:</span> myRemarkPlugin
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      This code does not work. Because config goes through
+                      runtime config and function can't be serialized. So I need
+                      to create npm package next to blog project and install it.
+                      See https://github.com/nuxt/content/issues/1367
+                    </p>
+                    <h2>Excerpt is not highlighted</h2>
+                    <p>
+                      Highlighter works only on body. If I use code blocks in
+                      excerpt the post preview is grey. See
+                      https://github.com/nuxt/content/pull/1802
+                    </p>
+                    <h2>Hard to use another highlighter for code</h2>
+                    <p>
+                      I use <a href="https://prismjs.com/">Prism</a> and have
+                      styles for it. With Nuxt Content I locked with Shiki.
+                      Shiki is not good for copy and paste. The pasted code is
+                      not formated, text without line brakes.
+                    </p>
+                    <p>
+                      I can turn off highlighting and write remark-prism plugin.
+                      But Prism does not works with remark nodes.
+                    </p>
+                    <p>
+                      I decided to use Prism after generation when the full html
+                      is ready.
+                    </p>
+                    <p>I added hook on nitro event</p>
+                    <pre
+                      class="language-ts has_file_name"
+                    ><span class="file_name">./server/plugins/nitro.ts</span><code class="language-ts"><span class="token keyword">import</span> <span class="token punctuation">{</span> <span class="token constant">JSDOM</span> <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'jsdom'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> Prism <span class="token keyword">from</span> <span class="token string">'prismjs'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> loadLanguages <span class="token keyword">from</span> <span class="token string">'prismjs/components/index.js'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">defineNitroPlugin</span><span class="token punctuation">(</span><span class="token punctuation">(</span>nitro<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    
+    <span class="token function">loadLanguages</span><span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token operator">...</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    nitro<span class="token punctuation">.</span>hooks<span class="token punctuation">.</span><span class="token function">hook</span><span class="token punctuation">(</span><span class="token string">'render:response'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>response<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> jsdom <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token constant">JSDOM</span></span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>body<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> document <span class="token operator">=</span> jsdom<span class="token punctuation">.</span>window<span class="token punctuation">.</span>document<span class="token punctuation">;</span>
+        Prism<span class="token punctuation">.</span><span class="token function">highlightAllUnder</span><span class="token punctuation">(</span>document<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        response<span class="token punctuation">.</span>body <span class="token operator">=</span> jsdom<span class="token punctuation">.</span>window<span class="token punctuation">.</span>document<span class="token punctuation">.</span>documentElement<span class="token punctuation">.</span>outerHTML<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      But the <code>&lt;code&gt;</code>tag must have class
+                      <code>language-&lt;language name&gt;</code>. And I need to
+                      add filename information.
+                    </p>
+                    <p>
+                      So I can write rehype plugin to add class and filename. It
+                      means new package and npm install. No.
+                    </p>
+                    <p>
+                      I can add my transformer. It executes after rehype plugins
+                      and before other default transformers (shiki highlighter
+                      is one of them). To add transformer I must write Nuxt
+                      module and register new hook on Content module. It means
+                      my module must be registered before content module.
+                    </p>
+                    <pre
+                      class="language-ts has_file_name"
+                    ><span class="file_name">./nuxt.config.ts</span><code class="language-ts">modules<span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">'./modules/blog'</span><span class="token punctuation">,</span>
+    <span class="token string">'@nuxt/content'</span>
+<span class="token punctuation">]</span><span class="token punctuation">,</span>
+</code></pre>
+                    <pre
+                      class="language-js has_file_name"
+                    ><span class="file_name">./modules/blog.mjs</span><code class="language-js"><span class="token keyword">import</span> <span class="token punctuation">{</span> defineNuxtModule <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'@nuxt/kit'</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">defineNuxtModule</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token function">setup</span> <span class="token punctuation">(</span><span class="token parameter">_options<span class="token punctuation">,</span> nuxt</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// @ts-ignore</span>
+    nuxt<span class="token punctuation">.</span><span class="token function">hook</span><span class="token punctuation">(</span><span class="token string">'content:context'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token parameter">contentContext</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      contentContext<span class="token punctuation">.</span>transformers<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token string">'./modules/my-transformer.ts'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre>
+                    <pre
+                      class="language-ts has_file_name"
+                    ><span class="file_name">./modules/my-transformer.ts</span><code class="language-ts"><span class="token keyword">import</span> <span class="token punctuation">{</span> visit <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'unist-util-visit'</span>
+<span class="token keyword">import</span> <span class="token keyword">type</span> <span class="token punctuation">{</span> ParsedContent <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'~~/../../nuxt_content/src/runtime/types'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+  name<span class="token operator">:</span> <span class="token string">'my-transformer'</span><span class="token punctuation">,</span>
+  extensions<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'.md'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token function-variable function">transform</span><span class="token operator">:</span> <span class="token keyword">async</span> <span class="token punctuation">(</span>content<span class="token operator">:</span> ParsedContent<span class="token punctuation">,</span> options<span class="token operator">:</span><span class="token builtin">any</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">const</span> <span class="token punctuation">{</span>
+      fileWrapClassName <span class="token operator">=</span> <span class="token string">'has_file_name'</span><span class="token punctuation">,</span>
+      fileClassName <span class="token operator">=</span> <span class="token string">'file_name'</span><span class="token punctuation">,</span>
+      fileParam <span class="token operator">=</span> <span class="token string">'file_name'</span>
+    <span class="token punctuation">}</span> <span class="token operator">=</span> options<span class="token punctuation">;</span>
+    <span class="token function">visit</span><span class="token punctuation">(</span>
+        content<span class="token punctuation">.</span>body<span class="token punctuation">,</span>
+        <span class="token punctuation">(</span>node<span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">(</span>node<span class="token punctuation">.</span>tag <span class="token operator">===</span> <span class="token string">'code'</span> <span class="token operator">&amp;&amp;</span> node<span class="token operator">?.</span>props<span class="token punctuation">.</span>code<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        visitor
+    <span class="token punctuation">)</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>content<span class="token punctuation">.</span>excerpt<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">visit</span><span class="token punctuation">(</span>
+          content<span class="token punctuation">.</span>excerpt<span class="token punctuation">,</span>
+          <span class="token punctuation">(</span>node<span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">(</span>node<span class="token punctuation">.</span>tag <span class="token operator">===</span> <span class="token string">'code'</span> <span class="token operator">&amp;&amp;</span> node<span class="token operator">?.</span>props<span class="token punctuation">.</span>code<span class="token punctuation">)</span><span class="token punctuation">,</span>
+          visitor
+      <span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> content<span class="token punctuation">;</span>
+
+    <span class="token keyword">function</span> <span class="token function">visitor</span><span class="token punctuation">(</span>node<span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">,</span> index<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword">null</span><span class="token punctuation">,</span> parent<span class="token operator">:</span> <span class="token builtin">any</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">typeof</span> parent <span class="token operator">===</span> <span class="token string">'undefined'</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> <span class="token punctuation">{</span> language<span class="token punctuation">,</span> meta <span class="token punctuation">}</span> <span class="token operator">=</span> node<span class="token punctuation">.</span>props<span class="token punctuation">;</span>
+   
+        <span class="token keyword">let</span> params <span class="token operator">=</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>meta <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          params <span class="token operator">=</span> meta<span class="token punctuation">.</span><span class="token function">match</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">([\w]+)=(?:")([^"]*)(?:")+</span><span class="token regex-delimiter">/</span><span class="token regex-flags">g</span></span><span class="token punctuation">)</span>
+            <span class="token operator">?.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">(</span>s<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> s <span class="token operator">!==</span> <span class="token string">''</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token punctuation">(</span>s<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> s<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">reduce</span><span class="token punctuation">(</span><span class="token punctuation">(</span>acc<span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">[</span>index<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">]</span><span class="token operator">:</span><span class="token builtin">any</span><span class="token punctuation">}</span><span class="token punctuation">,</span> item<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+              <span class="token keyword">const</span> index<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">=</span> item<span class="token punctuation">.</span><span class="token function">indexOf</span><span class="token punctuation">(</span><span class="token string">'='</span><span class="token punctuation">)</span>
+              acc<span class="token punctuation">[</span>item<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token operator">=</span> item
+                <span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span>index <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">"(.+)"</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span> <span class="token string">'$1'</span><span class="token punctuation">)</span>
+              <span class="token keyword">return</span> acc
+            <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    
+        <span class="token comment">// add filename node to the &lt;pre&gt;</span>
+        <span class="token keyword">const</span> pre <span class="token operator">=</span> node<span class="token punctuation">.</span>children<span class="token operator">!</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> code <span class="token operator">=</span> pre<span class="token punctuation">.</span>children<span class="token operator">!</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        code<span class="token punctuation">.</span>props<span class="token punctuation">.</span>className <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">language-</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>language<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> wrapClasses <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token keyword">const</span> preChildren <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>params <span class="token operator">&amp;&amp;</span> params<span class="token punctuation">[</span>fileParam<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          wrapClasses<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>fileWrapClassName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+          preChildren<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+            type<span class="token operator">:</span> <span class="token string">'element'</span><span class="token punctuation">,</span>
+            tag<span class="token operator">:</span> <span class="token string">'span'</span><span class="token punctuation">,</span>
+            props<span class="token operator">:</span> <span class="token punctuation">{</span>
+                className<span class="token operator">:</span> fileClassName<span class="token punctuation">,</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            children<span class="token operator">:</span> <span class="token punctuation">[</span>
+                <span class="token punctuation">{</span>
+                    type<span class="token operator">:</span> <span class="token string">'text'</span><span class="token punctuation">,</span>
+                    value<span class="token operator">:</span> params<span class="token punctuation">[</span>fileParam<span class="token punctuation">]</span><span class="token punctuation">,</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token punctuation">]</span>
+          <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        preChildren<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token operator">...</span>pre<span class="token punctuation">.</span>children<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        pre<span class="token punctuation">.</span>props<span class="token punctuation">.</span>className <span class="token operator">=</span> wrapClasses<span class="token punctuation">;</span>
+        pre<span class="token punctuation">.</span>children <span class="token operator">=</span> preChildren<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+                    <p>
+                      Another method is define my
+                      <code>ProseCode</code> component.
+                    </p>
+                    <pre
+                      class="language-html has_file_name"
+                    ><span class="file_name">./components/content/ProseCode.vue</span><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>template</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>pre</span> <span class="token attr-name">:class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>preClass<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>span</span> <span class="token attr-name">v-if</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>fileName<span class="token punctuation">"</span></span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>file_name<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>{{ fileName }}<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>span</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>code</span> <span class="token attr-name">:class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>codeClass<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>{{ code }}<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>code</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>pre</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>template</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>scss<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token style"><span class="token language-css">
+<span class="token selector">pre</span> <span class="token punctuation">{</span>
+  <span class="token property">white-space</span><span class="token punctuation">:</span> normal<span class="token punctuation">;</span>
+
+  <span class="token selector">code</span> <span class="token punctuation">{</span>
+    <span class="token property">white-space</span><span class="token punctuation">:</span> pre<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">&gt;</span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">setup</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>ts<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token script"><span class="token language-javascript">
+<span class="token keyword">const</span> props <span class="token operator">=</span> <span class="token function">defineProps</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token literal-property property">code</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">type</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+      <span class="token keyword">default</span><span class="token operator">:</span> <span class="token string">''</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">language</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">type</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+      <span class="token keyword">default</span><span class="token operator">:</span> <span class="token keyword">null</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">filename</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">type</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+      <span class="token keyword">default</span><span class="token operator">:</span> <span class="token keyword">null</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">highlights</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">type</span><span class="token operator">:</span> Array <span class="token keyword">as</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> number<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+      <span class="token function-variable function">default</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">meta</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">type</span><span class="token operator">:</span> String<span class="token punctuation">,</span>
+      <span class="token keyword">default</span><span class="token operator">:</span> <span class="token keyword">null</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">)</span>
+
+<span class="token keyword">const</span> codeClass <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">language-</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>props<span class="token punctuation">.</span>language<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span><span class="token punctuation">;</span>
+<span class="token keyword">let</span> <span class="token literal-property property">preClass</span><span class="token operator">:</span> string<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token keyword">let</span> fileName <span class="token operator">=</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span>props<span class="token punctuation">.</span>meta <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> metaParams <span class="token operator">=</span> props<span class="token punctuation">.</span>meta<span class="token punctuation">.</span><span class="token function">match</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">([\w]+)=(?:")([^"]*)(?:")+</span><span class="token regex-delimiter">/</span><span class="token regex-flags">g</span></span><span class="token punctuation">)</span>
+    <span class="token operator">?.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">s</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> s <span class="token operator">!==</span> <span class="token string">''</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter">s</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> s<span class="token punctuation">.</span><span class="token function">trim</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">.</span><span class="token function">reduce</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token parameter"><span class="token literal-property property">acc</span><span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">[</span>index<span class="token operator">:</span> string<span class="token punctuation">]</span><span class="token operator">:</span>any<span class="token punctuation">}</span><span class="token punctuation">,</span> item</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> <span class="token literal-property property">index</span><span class="token operator">:</span> number <span class="token operator">=</span> item<span class="token punctuation">.</span><span class="token function">indexOf</span><span class="token punctuation">(</span><span class="token string">'='</span><span class="token punctuation">)</span>
+      acc<span class="token punctuation">[</span>item<span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token operator">=</span> item
+        <span class="token punctuation">.</span><span class="token function">substring</span><span class="token punctuation">(</span>index <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">"(.+)"</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span> <span class="token string">'$1'</span><span class="token punctuation">)</span>
+      <span class="token keyword">return</span> acc<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>metaParams <span class="token operator">&amp;&amp;</span> metaParams<span class="token punctuation">[</span><span class="token string">"file_name"</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      fileName <span class="token operator">=</span> metaParams<span class="token punctuation">[</span><span class="token string">"file_name"</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+      preClass<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span><span class="token string">"has_file_name"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre>
+                    <p>Now I can delete my transformer.</p>
+                    <h2>Can't turn off hydration</h2>
+                    <p>
+                      Nuxt generates a lot of scripts. Result page is heavy.
+                      Looks like every page contains source data for all posts.
+                    </p>
+                    <p>I wrote hook to remove scripts after rendering.</p>
+                    <pre
+                      class="language-ts has_file_name"
+                    ><span class="file_name">./server/plugins/nitro.ts</span><code class="language-ts">nitro<span class="token punctuation">.</span>hooks<span class="token punctuation">.</span><span class="token function">hook</span><span class="token punctuation">(</span><span class="token string">'render:response'</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>response<span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    response<span class="token punctuation">.</span>body <span class="token operator">=</span> response<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">replaceAll</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">&lt;\/div&gt;&lt;script.*&lt;\/body&gt;</span><span class="token regex-delimiter">/</span><span class="token regex-flags">g</span></span><span class="token punctuation">,</span> <span class="token string">'&lt;\/div&gt;&lt;\/body&gt;'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    response<span class="token punctuation">.</span>body <span class="token operator">=</span> response<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">replaceAll</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">&lt;link rel="(preload|modulepreload|prefetch)" [^&gt;]+&gt;</span><span class="token regex-delimiter">/</span><span class="token regex-flags">g</span></span><span class="token punctuation">,</span><span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <h2>Page doesn't refresh in development</h2>
+                    <p>
+                      I run <code>npm run dev</code>, open this post, make
+                      changes in markdown and browser shows old text. Even
+                      styles change doesn't work. I have to press F5.
+                    </p>
+                    <h1>Conclusion</h1>
+                    <p>
+                      Some errors have been fixed and pull requests have been
+                      merged. Now I have two problems: <br />
+                      First, it is absolute path for images. They live in
+                      <code>/public</code>. <br />
+                      Second, HMR does not work. Text on page is not refreshed
+                      on change in file. IT is very inconvenient.<br />
+                      So I returned to vite-ssg.
+                    </p>
+                    <p>
+                      Nuxt + Content is framework that can force you to change
+                      code and compromise in order to build. Maintainers can
+                      make some changes and I think it could be fatal for my
+                      project.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!---->
+            </div>
+          </div>
+        </section>
+        <footer id="page-footer">
+          <div class="line">
+            <a class="footer_logo" href="//www.qwertovsky.com"
+              ><img src="/blog/assets/largeqwerto-12cd7be1.svg"
+            /></a>
+            <div class="copyright">Qwertovsky</div>
+            <div class="spacer"></div>
+            <div class="links">
+              <a class="twitter" href="https://twitter.com/qwertovsky"
+                ><svg
+                  aria-hidden="true"
+                  focusable="false"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  class=""
+                >
+                  <path
+                    d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
+                    class=""
+                  ></path></svg></a
+              ><a class="mail" href="mailto:g7opj79577vmd3ds@fastmail.com"
+                ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path
+                    d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"
+                  ></path></svg
+              ></a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

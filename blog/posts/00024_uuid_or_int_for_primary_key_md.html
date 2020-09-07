@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/blog/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UUID or Int for primary key | Qwertoblog</title>
+
+    <link rel="stylesheet" href="/blog/assets/index-dbbc22e1.css" />
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true">
+      <div id="appWrap">
+        <div id="pageHeader">
+          <a href="/blog/" class="qm_brand">QwertoBlog</a>
+          <div></div>
+          <a href="/blog/tag" class="qm_nav_link tags_link" tabindex="0">Tags</a
+          ><a class="qm_nav_link site_link" tabindex="0" href="//qwertovsky.com"
+            >Site</a
+          >
+        </div>
+        <section id="centerPart">
+          <div class="post">
+            <div class="post_title">
+              <span>UUID or Int for primary key</span>
+            </div>
+            <div class="post_meta">
+              2020-09-06
+              <span
+                ><!--[--><span>
+                  | <a href="/blog/tag/backend" class="">backend</a></span
+                ><span>
+                  | <a href="/blog/tag/database" class="">database</a></span
+                ><span>
+                  | <a href="/blog/tag/postgresql" class="">postgresql</a></span
+                ><!--]--></span
+              >
+            </div>
+            <div class="post_content">
+              <div>
+                <div>
+                  <div>
+                    <p>What better to use for primary key. UUID or integer.</p>
+                    <!-- more -->
+                    <h1>Drawbacks of UUID</h1>
+                    <p>
+                      It takes more memory. There are 128 bits against 64 bits
+                      for int8. Index will be bigger too.
+                    </p>
+                    <p>They should be generated. It takes processing time.</p>
+                    <p>
+                      They are still not unique. Collisions might happen. I need
+                      write more code to catch this error and generate new UUID.
+                      <br />
+                      If I use serial I can be sure that value is unique. With
+                      UUID I should keep constraint on production database. It
+                      take more resources and time for insert operations.
+                    </p>
+                    <p>
+                      UUIDs are not indexed well. Key should be sequential for
+                      best performance. Some people try to write own function to
+                      generate UUID that contains serial part and random part.
+                    </p>
+                    <p>
+                      I can't make partitions of a table by UUID. There is not
+                      diapason.
+                    </p>
+                    <p>
+                      It is pain to debug code where
+                      objectId='B1E7D34-1DF-4DC-5BA3E3DF456A410'. I can't
+                      remember this and look with my eyes. Serial number might
+                      be bigger than I can remember too. But it is sequential
+                      and I need to remember just some digits from the end.
+                    </p>
+                    <p>
+                      I can't sort on front by UUID. So I need to save and load
+                      more information (ex. date).
+                    </p>
+                    <h1>Positive about UUID</h1>
+                    <p>
+                      UUID is good as identifier if I would like to generate id
+                      before save entity in DB. I can make it on front. Don't
+                      forget to check that it does not exist and handle
+                      exception. There is not one more request to get id for new
+                      entity.
+                    </p>
+                    <p>
+                      UUID is easy to find in logs. Grep by number can give not
+                      relevant lines.
+                    </p>
+                    <p>
+                      UUID can be used as unique acrose all tables and entities.
+                      If I have files table, and files can be linked with
+                      multiple entities, then instead of multiple tables
+                      (object_id, file_id) or one table (object_id,
+                      object_type_id, file_id), I can just create one table
+                      (object_uuid, file_id) to reference the UUID for any type
+                      of entity and the file.
+                    </p>
+                    <p>
+                      UUID is good for file name too. If files are on disk. I
+                      can name files with UUIDs and link these UUIDs with my
+                      entities. And there is no table with file name in DB.
+                    </p>
+                    <p>
+                      UUID is good for external objects those ids I can't
+                      control after creation. Serial numbers will not be the
+                      same forever. If I need to do custom backup (or merging or
+                      replication), I can forget to keep id. New one will be
+                      generated from sequence. In old data serial numbers can
+                      have gaps because of transactions not completed. There are
+                      no gaps in new data. With merging keep old ids might be
+                      impossible.
+                    </p>
+                    <p>
+                      Merging databases is easy with UUID. Just take care about
+                      possible collisions.
+                    </p>
+                    <p>
+                      It is possible to share common data between different
+                      shards, when you can't have distributed sequence.
+                    </p>
+                    <p>
+                      Serial ids are predictable. User can try to get access to
+                      data that he does not own. User can analyze application
+                      audience and traffic. User can easy grab data from
+                      site.<br />
+                      With random UUID analysis is impossible. But it is still
+                      worth to check data owner.
+                    </p>
+                    <h1>Get along without UUID</h1>
+                    <p>
+                      For offline data I can create temporary id. Then it will
+                      be replaced during synchronization.
+                    </p>
+                    <p>
+                      If I have multiple servers (shards, replicas), I can give
+                      each server a ID and make the primary key a combination of
+                      the entity ID and the server ID. Primary key would have
+                      maximum size up to (n * 64bit), where n is number of
+                      servers.
+                    </p>
+                    <p>
+                      Another strategy is create a range of available IDs for
+                      each server.
+                    </p>
+                    <pre
+                      class="language-sql"
+                    ><code class="language-sql"><span class="token comment">-- for the first server:</span>
+<span class="token keyword">create</span> sequence seq_entity_id <span class="token keyword">start</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token comment">-- for the second server:</span>
+<span class="token keyword">create</span> sequence seq_entity_id <span class="token keyword">start</span> <span class="token number">1000001</span><span class="token punctuation">;</span>
+<span class="token comment">-- for the third sever</span>
+<span class="token keyword">create</span> sequence seq_entity_id <span class="token keyword">start</span> <span class="token number">2000001</span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      It is hard to say that 1000000 is maximum. So it is more
+                      convenient to use <code>INCREMENT</code>.
+                    </p>
+                    <pre
+                      class="language-sql"
+                    ><code class="language-sql"><span class="token comment">-- for the first server:</span>
+<span class="token keyword">create</span> sequence seq_entity_id <span class="token keyword">start</span> <span class="token number">1</span> INCREMENT <span class="token number">100</span><span class="token punctuation">;</span> 
+<span class="token comment">-- for the second server:</span>
+<span class="token keyword">create</span> sequence seq_entity_id <span class="token keyword">start</span> <span class="token number">2</span> INCREMENT <span class="token number">100</span><span class="token punctuation">;</span> 
+<span class="token comment">-- for the third sever</span>
+<span class="token keyword">create</span> sequence seq_entity_id <span class="token keyword">start</span> <span class="token number">3</span> INCREMENT <span class="token number">100</span><span class="token punctuation">;</span> 
+</code></pre>
+                    <p>There is space to have up to 100 servers.</p>
+                    <p>
+                      To do IDs not predictable I can generate them from
+                      sequence unique for each user.<br />
+                      Instead of <code>nextval('seq_entity_id')</code> I will
+                      use custom <code>next_entity_id(user_id)</code>.
+                    </p>
+                    <pre
+                      class="language-sql"
+                    ><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> t_user <span class="token punctuation">(</span>
+  user_id <span class="token keyword">integer</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span> <span class="token keyword">DEFAULT</span> nextval<span class="token punctuation">(</span><span class="token string">'seq_t_user_id'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  user_pk_entity_id <span class="token keyword">integer</span> <span class="token keyword">default</span> <span class="token number">0</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+                    <pre
+                      class="language-sql"
+                    ><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token operator">OR</span> <span class="token keyword">REPLACE</span> <span class="token keyword">FUNCTION</span> next_entity_id<span class="token punctuation">(</span>userid <span class="token keyword">integer</span><span class="token punctuation">)</span>
+<span class="token keyword">returns</span> <span class="token keyword">integer</span> <span class="token keyword">AS</span>
+$
+<span class="token keyword">DECLARE</span>
+  next_pk <span class="token keyword">integer</span><span class="token punctuation">;</span>
+<span class="token keyword">BEGIN</span>
+
+  <span class="token keyword">UPDATE</span> t_user
+  <span class="token keyword">set</span> user_pk_entity_id <span class="token operator">=</span> user_pk_entity_id <span class="token operator">+</span> <span class="token number">1</span>
+  <span class="token keyword">where</span> user_id <span class="token operator">=</span> userid<span class="token punctuation">;</span>
+
+  <span class="token keyword">SELECT</span> <span class="token keyword">INTO</span> next_pk user_pk_entity_id
+  <span class="token keyword">from</span> t_user
+  <span class="token keyword">where</span> user_id <span class="token operator">=</span> userid<span class="token punctuation">;</span>
+
+  <span class="token keyword">RETURN</span> next_pk<span class="token punctuation">;</span>
+<span class="token keyword">END</span><span class="token punctuation">;</span>
+$ <span class="token keyword">LANGUAGE</span> <span class="token string">'plpgsql'</span><span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      The function <code>next_entity_id</code> is transactional.
+                      The row from <code>t_user</code> will be locked. But it
+                      will not block other users. So it would not be a
+                      performance issue.<br />
+                      Positive effect is gapless id for entity table.
+                    </p>
+                    <p>
+                      Take care and increment id into
+                      <code>UPDATE</code> statement. If I make
+                      <code>next_pk</code> before update there will be error.
+                    </p>
+                    <pre
+                      class="language-sql"
+                    ><code class="language-sql"><span class="token keyword">SELECT</span> <span class="token keyword">INTO</span> next_pk user_pk_entity_id <span class="token operator">+</span> <span class="token number">1</span>
+<span class="token keyword">from</span> t_user
+<span class="token keyword">where</span> user_id <span class="token operator">=</span> userid<span class="token punctuation">;</span>
+
+<span class="token keyword">UPDATE</span> t_user
+<span class="token keyword">set</span> user_pk_entity_id <span class="token operator">=</span> next_pk
+<span class="token keyword">where</span> user_id <span class="token operator">=</span> userid<span class="token punctuation">;</span>
+
+<span class="token keyword">RETURN</span> next_pk<span class="token punctuation">;</span>
+</code></pre>
+                    <p>
+                      With this code user can create simultaneously two entities
+                      with the same id. The second thread waits on update. But
+                      it already has <code>next_pk</code> based on current
+                      <code>user_pk_entity_id</code>. And the second thread does
+                      not see the changes from the first thread unless the first
+                      transaction is commited. So
+                      <code>user_pk_entity_id</code> is still <code>0</code>,
+                      like it was before the first request. After two request
+                      <code>user_pk_entity_id</code> will be <code>1</code>. And
+                      two entities will have <code>id = 1</code>.
+                    </p>
+                    <p>
+                      In addition, I hide user id from user. Or I can add new
+                      UUID column to use on front. But primary key still be
+                      serial.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!---->
+            </div>
+          </div>
+        </section>
+        <footer id="page-footer">
+          <div class="line">
+            <a class="footer_logo" href="//www.qwertovsky.com"
+              ><img src="/blog/assets/largeqwerto-12cd7be1.svg"
+            /></a>
+            <div class="copyright">Qwertovsky</div>
+            <div class="spacer"></div>
+            <div class="links">
+              <a class="twitter" href="https://twitter.com/qwertovsky"
+                ><svg
+                  aria-hidden="true"
+                  focusable="false"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  class=""
+                >
+                  <path
+                    d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
+                    class=""
+                  ></path></svg></a
+              ><a class="mail" href="mailto:g7opj79577vmd3ds@fastmail.com"
+                ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path
+                    d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"
+                  ></path></svg
+              ></a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>

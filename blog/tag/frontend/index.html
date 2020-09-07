@@ -1,23 +1,498 @@
-<!DOCTYPE html><html lang="en"><head>
-  <meta charset="utf-8">
-  <meta content="Qwertovsky" name="author">
-  <link href="mailto:valery@qwertovsky.com" rel="author">
-  <meta content="Qwertovsky, Qwertoblog, Квертовский" name="keywords">
-  <meta content="Qwertovsky blog" name="description">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="icon" href="/blog/favicon.svg">
-  <title>Tag frontend | QwertoBlog</title>
-  
-    <link href="/blog/css/app.f0de77ac.css" rel="stylesheet">
-  
-</head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/blog/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tag frontend | Qwertoblog</title>
 
-<body>
-  <div id="app"><div id="pageHeader"><a href="/blog/" class="qm_brand router-link-active">QwertoBlog</a><div></div><a href="/blog/tag" class="qm_nav_link tags_link router-link-active" tabindex="0">Tags</a><a tabindex="0" href="//qwertovsky.com" class="qm_nav_link site_link">Site</a></div><section id="centerPart"><div id="posts"><div class="post_wrap"><div class="post"><div class="post_title"><a href="/blog/posts/00023_creating_blog_with_vue.js.md" class="" target="_blank">Creating blog with Vue.js</a></div><div class="post_meta"> 2020-01-20 <span><span> | <a href="/blog/tag/vue.js" class="">vue.js</a></span><span> | <a href="/blog/tag/js" class="">js</a></span><span> | <a href="/blog/tag/frontend" class="router-link-exact-active router-link-active">frontend</a></span></span></div><div class="post_content"><div><p>Earlier I tried to build blog with VuePress (<a href="/blog/posts/00022_creating_blog_with_vuepress.md" class="" target="_blank">link</a>). And I did not like it.
-In this post I am trying to create static files for blog with <a href="https://vuejs.org">Vue.js</a> and <a href="https://github.com/chrisvfritz/prerender-spa-plugin">prerender-spa-plugin</a>.</p></div></div></div></div><div class="post_wrap"><div class="post"><div class="post_title"><a href="/blog/posts/00022_creating_blog_with_vuepress.md" class="" target="_blank">Creating blog with VuePress</a></div><div class="post_meta"> 2019-12-22 <span><span> | <a href="/blog/tag/vue.js" class="">vue.js</a></span><span> | <a href="/blog/tag/vuepress" class="">vuepress</a></span><span> | <a href="/blog/tag/frontend" class="router-link-exact-active router-link-active">frontend</a></span></span></div><div class="post_content"><div><p>I want to migrate from Blogger to static files. In this post I am investigating VuePress static site generator.</p></div></div></div></div><div class="post_wrap"><div class="post"><div class="post_title"><a href="/blog/posts/00018_gps4tcx_add_gps_data_to_garmin_tcx_file.md" class="" target="_blank">GPS4TCX. How add GPS data to Garmin TCX file</a></div><div class="post_meta"> 2015-02-15 <span><span> | <a href="/blog/tag/frontend" class="router-link-exact-active router-link-active">frontend</a></span><span> | <a href="/blog/tag/js" class="">js</a></span></span></div><div class="post_content"><div><p>Garmin Connect may draw map for your route. This tracks may be available for other people. But your device must have GPS.</p> <p>I don't want use GPS, but I like to share my tracks. I wrote programm for that. It adds GPS data of path, that I draw on map, to TCX-file. Then it is possible to upload this file to Garmin Connect.</p> <p>Programm URL - <a href="//qwertovsky.com/gps4tcx/">https://qwertovsky.com/gps4tcx/</a></p></div></div></div></div><div class="post_wrap"><div class="post"><div class="post_title"><a href="//qwertovsky.com/day-month-year-calendar/" target="_blank"> Day-month-year-calendar. jQuery plugin <svg data-v-51f01b59="" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="5 5 14 14" fill="currentColor" role="presentation" class="out_link_icon"><path data-v-51f01b59="" d="M16 16.667H8A.669.669 0 0 1 7.333 16V8c0-.367.3-.667.667-.667h3.333c.367 0 .667-.3.667-.666C12 6.3 11.7 6 11.333 6h-4C6.593 6 6 6.6 6 7.333v9.334C6 17.4 6.6 18 7.333 18h9.334C17.4 18 18 17.4 18 16.667v-4c0-.367-.3-.667-.667-.667-.366 0-.666.3-.666.667V16c0 .367-.3.667-.667.667zm-2.667-10c0 .366.3.666.667.666h1.727L9.64 13.42a.664.664 0 1 0 .94.94l6.087-6.087V10c0 .367.3.667.666.667.367 0 .667-.3.667-.667V6h-4c-.367 0-.667.3-.667.667z"></path></svg></a></div><div class="post_meta"> 2015-01-16 <span><span> | <a href="/blog/tag/frontend" class="router-link-exact-active router-link-active">frontend</a></span><span> | <a href="/blog/tag/js" class="">js</a></span></span></div><div class="post_content"><div><p>It is a jQuery plugin that creates three select boxes for one input field with date. One box is for days. One is for months. And one is for years.</p></div></div></div></div><div class="pagination"><div class="pagination_older"><!----></div><div class="pagination_home"></div><div class="pagination_newer"><!----></div></div></div></section><footer id="page-footer"><div class="line"><a href="//www.qwertovsky.com" class="footer_logo"><img src="/blog/img/largeqwerto.176d8a1e.svg"></a><div class="copyright">Qwertovsky</div><div class="spacer"></div><div class="links"><a href="https://twitter.com/qwertovsky" class="twitter"><svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg></a><a href="mailto:valery@qwertovsky.com" class="mail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path></svg></a></div></div></footer></div>
-  
-    
+    <link rel="stylesheet" href="/blog/assets/index-dbbc22e1.css" />
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true">
+      <div id="appWrap">
+        <div id="pageHeader">
+          <a href="/blog/" class="qm_brand">QwertoBlog</a>
+          <div></div>
+          <a href="/blog/tag" class="qm_nav_link tags_link" tabindex="0">Tags</a
+          ><a class="qm_nav_link site_link" tabindex="0" href="//qwertovsky.com"
+            >Site</a
+          >
+        </div>
+        <section id="centerPart">
+          <div id="posts">
+            <!--[-->
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a href="/blog/posts/0003100_nuxt_blog_md" class=""
+                    >Update blog to Nuxt 3</a
+                  >
+                </div>
+                <div class="post_meta">
+                  2023-01-15
+                  <span
+                    ><!--[--><span>
+                      | <a href="/blog/tag/js" class="">js</a></span
+                    ><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><span>
+                      | <a href="/blog/tag/vue.js" class="">vue.js</a></span
+                    ><span> | <a href="/blog/tag/blog" class="">blog</a></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>
+                          Nuxt.js have been updated to Vue 3. Hence I decided to
+                          try it for my blog. Nuxt has module
+                          <a href="https://content.nuxtjs.org">@nuxt/content</a>
+                          to load markdown files. Let's see how it is modifiable
+                          for my purpose.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/blog/posts/0003100_nuxt_blog_md" class=""
+                    >read more</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a href="/blog/posts/0003000_update_blog_to_vue3_md" class=""
+                    >Update blog to Vue.js 3</a
+                  >
+                </div>
+                <div class="post_meta">
+                  2022-12-14
+                  <span
+                    ><!--[--><span>
+                      | <a href="/blog/tag/js" class="">js</a></span
+                    ><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><span>
+                      | <a href="/blog/tag/vue.js" class="">vue.js</a></span
+                    ><span> | <a href="/blog/tag/blog" class="">blog</a></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>
+                          I am trying to use Vue and Vite for my blog. To
+                          generate static pages I use ViteSSG. I migrated from
+                          Vue 2 with CLI and faced many problems.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="/blog/posts/0003000_update_blog_to_vue3_md" class=""
+                    >read more</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a
+                    href="/blog/posts/0002700_transfer_date_from_form_to_db_md"
+                    class=""
+                    >Transfer date from form to database</a
+                  >
+                </div>
+                <div class="post_meta">
+                  2021-01-05
+                  <span
+                    ><!--[--><span>
+                      | <a href="/blog/tag/java" class="">java</a></span
+                    ><span> | <a href="/blog/tag/js" class="">js</a></span
+                    ><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><span>
+                      | <a href="/blog/tag/backend" class="">backend</a></span
+                    ><span>
+                      |
+                      <a href="/blog/tag/postgresql" class=""
+                        >postgresql</a
+                      ></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>
+                          There are Angular, PrimeNG, Spring Boot, JDBC,
+                          PostgreSQL
+                        </p>
+                        <p>
+                          I need to save date and time from form to database and
+                          show it again.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <a
+                    href="/blog/posts/0002700_transfer_date_from_form_to_db_md"
+                    class=""
+                    >read more</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a
+                    href="/blog/posts/00025_reduce_the_size_of_vue_js_app_md"
+                    class=""
+                    >Reduce the size of Vue.js application</a
+                  >
+                </div>
+                <div class="post_meta">
+                  2020-09-12
+                  <span
+                    ><!--[--><span>
+                      | <a href="/blog/tag/vue.js" class="">vue.js</a></span
+                    ><span> | <a href="/blog/tag/js" class="">js</a></span
+                    ><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>When I build my app Vue.js CLI shows result:</p>
+                        <pre
+                          class="language-sh"
+                        ><code class="language-sh">File                                 Size               Gzipped
 
-
-</body></html>
+dist/js/chunk-vendors.ead599c9.js    <span class="token number">1910.45</span> kb         <span class="token number">603.09</span> kb
+dist/js/index.4ca2cadd.js            <span class="token number">201.02</span> kb          <span class="token number">39.30</span> kb
+dist/css/index.7cd5b102.css          <span class="token number">39.22</span> kb           <span class="token number">5.96</span> kb
+</code></pre>
+                        <p>And it says:</p>
+                        <pre
+                          class="language-sh"
+                        ><code class="language-sh">asset size limit: The following asset<span class="token punctuation">(</span>s<span class="token punctuation">)</span> exceed the recommended size limit <span class="token punctuation">(</span><span class="token number">244</span> KiB<span class="token punctuation">)</span>.
+This can impact web performance.
+Assets: 
+  js/chunk-vendors.ead599c9.js <span class="token punctuation">(</span><span class="token number">1.87</span> MiB<span class="token punctuation">)</span>
+</code></pre>
+                        <p>How can I make it better?</p>
+                      </div>
+                    </div>
+                  </div>
+                  <a
+                    href="/blog/posts/00025_reduce_the_size_of_vue_js_app_md"
+                    class=""
+                    >read more</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a
+                    href="/blog/posts/00023_creating_blog_with_vue_js_md"
+                    class=""
+                    >Creating blog with Vue.js</a
+                  >
+                </div>
+                <div class="post_meta">
+                  2020-01-20
+                  <span
+                    ><!--[--><span>
+                      | <a href="/blog/tag/vue.js" class="">vue.js</a></span
+                    ><span> | <a href="/blog/tag/js" class="">js</a></span
+                    ><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><span> | <a href="/blog/tag/blog" class="">blog</a></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>
+                          Earlier I tried to build blog with VuePress (<a
+                            href="/blog/posts/00022_creating_blog_with_vuepress_md"
+                            class=""
+                            >link</a
+                          >). And I did not like it. In this post I am trying to
+                          create static files for blog with
+                          <a href="https://vuejs.org">Vue.js</a> and
+                          <a
+                            href="https://github.com/chrisvfritz/prerender-spa-plugin"
+                            >prerender-spa-plugin</a
+                          >.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <a
+                    href="/blog/posts/00023_creating_blog_with_vue_js_md"
+                    class=""
+                    >read more</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a
+                    href="/blog/posts/00022_creating_blog_with_vuepress_md"
+                    class=""
+                    >Creating blog with VuePress</a
+                  >
+                </div>
+                <div class="post_meta">
+                  2019-12-22
+                  <span
+                    ><!--[--><span>
+                      | <a href="/blog/tag/vue.js" class="">vue.js</a></span
+                    ><span>
+                      | <a href="/blog/tag/vuepress" class="">vuepress</a></span
+                    ><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><span> | <a href="/blog/tag/blog" class="">blog</a></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>
+                          I want to migrate from Blogger to static files. In
+                          this post I am investigating VuePress static site
+                          generator.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <a
+                    href="/blog/posts/00022_creating_blog_with_vuepress_md"
+                    class=""
+                    >read more</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a
+                    href="/blog/posts/00018_gps4tcx_add_gps_data_to_garmin_tcx_file_md"
+                    class=""
+                    >GPS4TCX. How add GPS data to Garmin TCX file</a
+                  >
+                </div>
+                <div class="post_meta">
+                  2015-02-15
+                  <span
+                    ><!--[--><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><span> | <a href="/blog/tag/js" class="">js</a></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>
+                          Garmin Connect may draw map for your route. This
+                          tracks may be available for other people. But your
+                          device must have GPS.
+                        </p>
+                        <p>
+                          I don't want use GPS, but I like to share my tracks. I
+                          wrote programm for that. It adds GPS data of path,
+                          that I draw on map, to TCX-file. Then it is possible
+                          to upload this file to Garmin Connect.
+                        </p>
+                        <p>
+                          Programm URL -
+                          <a href="//qwertovsky.com/gps4tcx/"
+                            >https://qwertovsky.com/gps4tcx/</a
+                          >
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <a
+                    href="/blog/posts/00018_gps4tcx_add_gps_data_to_garmin_tcx_file_md"
+                    class=""
+                    >read more</a
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="post_wrap">
+              <div class="post">
+                <div class="post_title">
+                  <a href="//qwertovsky.com/day-month-year-calendar/"
+                    >Day-month-year-calendar. jQuery plugin
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="1em"
+                      height="1em"
+                      viewBox="5 5 14 14"
+                      fill="currentColor"
+                      role="presentation"
+                      class="out_link_icon"
+                      data-v-9b8efc0a=""
+                    >
+                      <path
+                        d="M16 16.667H8A.669.669 0 0 1 7.333 16V8c0-.367.3-.667.667-.667h3.333c.367 0 .667-.3.667-.666C12 6.3 11.7 6 11.333 6h-4C6.593 6 6 6.6 6 7.333v9.334C6 17.4 6.6 18 7.333 18h9.334C17.4 18 18 17.4 18 16.667v-4c0-.367-.3-.667-.667-.667-.366 0-.666.3-.666.667V16c0 .367-.3.667-.667.667zm-2.667-10c0 .366.3.666.667.666h1.727L9.64 13.42a.664.664 0 1 0 .94.94l6.087-6.087V10c0 .367.3.667.666.667.367 0 .667-.3.667-.667V6h-4c-.367 0-.667.3-.667.667z"
+                        data-v-9b8efc0a=""
+                      ></path></svg
+                  ></a>
+                </div>
+                <div class="post_meta">
+                  2015-01-16
+                  <span
+                    ><!--[--><span>
+                      |
+                      <a
+                        aria-current="page"
+                        href="/blog/tag/frontend"
+                        class="router-link-active router-link-exact-active"
+                        >frontend</a
+                      ></span
+                    ><span> | <a href="/blog/tag/js" class="">js</a></span
+                    ><!--]--></span
+                  >
+                </div>
+                <div class="post_content">
+                  <div>
+                    <div>
+                      <div>
+                        <p>
+                          It is a jQuery plugin that creates three select boxes
+                          for one input field with date. One box is for days.
+                          One is for months. And one is for years.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="//qwertovsky.com/day-month-year-calendar/"
+                    >read more
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="1em"
+                      height="1em"
+                      viewBox="5 5 14 14"
+                      fill="currentColor"
+                      role="presentation"
+                      class="out_link_icon"
+                      data-v-9b8efc0a=""
+                    >
+                      <path
+                        d="M16 16.667H8A.669.669 0 0 1 7.333 16V8c0-.367.3-.667.667-.667h3.333c.367 0 .667-.3.667-.666C12 6.3 11.7 6 11.333 6h-4C6.593 6 6 6.6 6 7.333v9.334C6 17.4 6.6 18 7.333 18h9.334C17.4 18 18 17.4 18 16.667v-4c0-.367-.3-.667-.667-.667-.366 0-.666.3-.666.667V16c0 .367-.3.667-.667.667zm-2.667-10c0 .366.3.666.667.666h1.727L9.64 13.42a.664.664 0 1 0 .94.94l6.087-6.087V10c0 .367.3.667.666.667.367 0 .667-.3.667-.667V6h-4c-.367 0-.667.3-.667.667z"
+                        data-v-9b8efc0a=""
+                      ></path></svg
+                  ></a>
+                </div>
+              </div>
+            </div>
+            <!--]-->
+            <div class="pagination">
+              <div class="pagination_older"><!----></div>
+              <div class="pagination_home"></div>
+              <div class="pagination_newer"><!----></div>
+            </div>
+          </div>
+        </section>
+        <footer id="page-footer">
+          <div class="line">
+            <a class="footer_logo" href="//www.qwertovsky.com"
+              ><img src="/blog/assets/largeqwerto-12cd7be1.svg"
+            /></a>
+            <div class="copyright">Qwertovsky</div>
+            <div class="spacer"></div>
+            <div class="links">
+              <a class="twitter" href="https://twitter.com/qwertovsky"
+                ><svg
+                  aria-hidden="true"
+                  focusable="false"
+                  role="img"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  class=""
+                >
+                  <path
+                    d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"
+                    class=""
+                  ></path></svg></a
+              ><a class="mail" href="mailto:g7opj79577vmd3ds@fastmail.com"
+                ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                  <path
+                    d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"
+                  ></path></svg
+              ></a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
